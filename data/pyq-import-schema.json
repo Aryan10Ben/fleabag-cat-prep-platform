@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CAT PYQ Import Format",
+  "description": "Import legally obtained CAT questions into Fleabag PYQ system",
+  "type": "object",
+  "required": ["year", "slot", "sections"],
+  "properties": {
+    "year": { "type": "integer", "minimum": 2000, "maximum": 2030 },
+    "slot": { "type": "integer", "minimum": 1, "maximum": 3 },
+    "title": { "type": "string" },
+    "status": { "enum": ["DRAFT", "PUBLISHED", "ARCHIVED"] },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["section", "questions"],
+        "properties": {
+          "section": { "enum": ["VARC", "DILR", "QA"] },
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["order", "content", "type", "difficulty", "solution"],
+              "properties": {
+                "order": { "type": "integer" },
+                "content": { "type": "string" },
+                "type": { "enum": ["MCQ", "TITA"] },
+                "difficulty": { "enum": ["EASY", "MEDIUM", "HARD"] },
+                "solution": { "type": "string" },
+                "imageUrl": { "type": "string" },
+                "tableJson": { "type": "object" },
+                "chartJson": { "type": "object" },
+                "passage": { "type": "object", "properties": { "title": { "type": "string" }, "content": { "type": "string" } } },
+                "lrdiSet": { "type": "object", "properties": { "title": { "type": "string" }, "description": { "type": "string" } } },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["content", "isCorrect"],
+                    "properties": {
+                      "content": { "type": "string" },
+                      "isCorrect": { "type": "boolean" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

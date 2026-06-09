@@ -1,0 +1,285 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String          @id @default(cuid())
+  name             String?
+  email            String          @unique
+  password         String
+  role             String          @default("USER") // USER or ADMIN
+  streak           Int             @default(0)
+  lastActive       DateTime?
+  createdAt        DateTime        @default(now())
+  
+  attempts         Attempt[]
+  bookmarks        Bookmark[]
+  progress         UserProgress[]
+  achievements     Achievement[]
+  dailyGoals       DailyGoalProgress[]
+  examSessions     ExamSession[]
+  analytics        UserAnalytics?
+}
+
+model Topic {
+  id               String          @id @default(cuid())
+  name             String          // "Arithmetic", "Algebra", "Reading Comprehension"
+  category         String          // "QUANT", "VARC", "LRDI"
+  subtopics        Subtopic[]
+}
+
+model Subtopic {
+  id               String          @id @default(cuid())
+  name             String          // "Percentages", "Para Jumbles"
+  topicId          String
+  topic            Topic           @relation(fields: [topicId], references: [id])
+  questions        Question[]
+  formulaSheets    FormulaSheet[]
+  userProgress     UserProgress[]
+}
+
+model RCPassage {
+  id               String          @id @default(cuid())
+  title            String
+  content          String          // Passage text
+  questions        Question[]
+}
+
+model LRDISet {
+  id               String          @id @default(cuid())
+  title            String
+  description      String          // Caselet description
+  questions        Question[]
+}
+
+model Question {
+  id               String          @id @default(cuid())
+  content          String          // Question text (supports $LaTeX$)
+  type             String          @default("MCQ") // MCQ or TITA
+  difficulty       String          // EASY, MEDIUM, HARD
+  subtopicId       String?
+  subtopic         Subtopic?       @relation(fields: [subtopicId], references: [id])
+  rcPassageId      String?
+  rcPassage        RCPassage?      @relation(fields: [rcPassageId], references: [id])
+  lrdiSetId        String?
+  lrdiSet          LRDISet?        @relation(fields: [lrdiSetId], references: [id])
+  solution         String          // Detailed explanation
+  imageUrl         String?
+  tableJson        String?         // JSON table for DILR/Quant
+  chartJson        String?         // JSON chart config
+  options          Option[]
+  bookmarks        Bookmark[]
+  testQuestions    TestQuestion[]
+  pyqQuestions     CatPyqQuestion[]
+}
+
+model Option {
+  id               String          @id @default(cuid())
+  content          String
+  isCorrect        Boolean
+  questionId       String
+  question         Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model Test {
+  id               String          @id @default(cuid())
+  name             String          // "Arithmetic Test 1", "CAT Mock 2026"
+  type             String          // "TOPIC", "SECTION", "MOCK"
+  category         String          // "QUANT", "VARC", "LRDI", "FULL"
+  duration         Int             // Timer in minutes
+  questions        TestQuestion[]
+  attempts         Attempt[]
+}
+
+model TestQuestion {
+  id               String          @id @default(cuid())
+  testId           String
+  test             Test            @relation(fields: [testId], references: [id], onDelete: Cascade)
+  questionId       String
+  question         Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  order            Int
+}
+
+model Attempt {
+  id               String          @id @default(cuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id])
+  testId           String?
+  test             Test?           @relation(fields: [testId], references: [id])
+  catPyqPaperId    String?
+  catPyqPaper      CatPyqPaper?    @relation(fields: [catPyqPaperId], references: [id])
+  score            Int
+  percentile       Float
+  accuracy         Float
+  timeSpent        Int             // in seconds
+  correctCount     Int
+  incorrectCount   Int
+  unattemptedCount Int
+  completedAt      DateTime        @default(now())
+  answers          AttemptAnswer[]
+  sectionScores    AttemptSectionScore[]
+}
+
+model AttemptSectionScore {
+  id               String   @id @default(cuid())
+  attemptId        String
+  attempt          Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  section          String   // VARC, DILR, QA
+  score            Int
+  correctCount     Int
+  incorrectCount   Int
+  unattemptedCount Int
+  attemptedCount   Int
+  accuracy         Float
+  timeSpent        Int      // seconds
+}
+
+model AttemptAnswer {
+  id               String          @id @default(cuid())
+  attemptId        String
+  attempt          Attempt         @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId       String
+  section          String?         // VARC, DILR, QA for PYQ
+  selectedOptionId String?
+  titaAnswer       String?
+  isCorrect        Boolean
+  isMarkedReview   Boolean         @default(false)
+  timeSpentSeconds Int             @default(0)
+  visited          Boolean         @default(false)
+}
+
+// Previous Year CAT full mock papers (2020–2025, 3 slots each)
+model CatPyqPaper {
+  id          String          @id @default(cuid())
+  year        Int
+  slot        Int             // 1, 2, 3
+  title       String
+  status      String          @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  sections    CatPyqSection[]
+  attempts    Attempt[]
+  sessions    ExamSession[]
+
+  @@unique([year, slot])
+}
+
+model CatPyqSection {
+  id          String           @id @default(cuid())
+  paperId     String
+  paper       CatPyqPaper      @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  section     String           // VARC, DILR, QA
+  duration    Int              // minutes (40)
+  orderIndex  Int
+  questions   CatPyqQuestion[]
+
+  @@unique([paperId, section])
+}
+
+model CatPyqQuestion {
+  id          String        @id @default(cuid())
+  sectionId   String
+  section     CatPyqSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  questionId  String
+  question    Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  order       Int
+  setGroupId  String?       // RC passage or DILR set grouping key
+
+  @@unique([sectionId, questionId])
+}
+
+// Persist in-progress PYQ exam (timer + answers survive refresh)
+model ExamSession {
+  id                String      @id @default(cuid())
+  userId            String
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paperId           String
+  paper             CatPyqPaper @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  currentSection    String      @default("VARC")
+  sectionIndex      Int         @default(0)
+  sectionTimersJson String      // JSON: { VARC: 2400, DILR: 2400, QA: 2400 }
+  answersJson       String      // JSON answers state
+  questionTimesJson String      @default("{}")
+  startedAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  completed         Boolean     @default(false)
+
+  @@unique([userId, paperId])
+}
+
+model UserAnalytics {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  testsTaken        Int      @default(0)
+  pyqMocksTaken     Int      @default(0)
+  bestScore         Int      @default(0)
+  averageScore      Float    @default(0)
+  bestPercentile    Float    @default(0)
+  averagePercentile Float    @default(0)
+  strongestSection  String?
+  weakestSection    String?
+  weeklyProgressJson  String @default("[]")
+  monthlyProgressJson String @default("[]")
+  updatedAt         DateTime @updatedAt
+}
+
+model Bookmark {
+  id               String          @id @default(cuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id])
+  questionId       String
+  question         Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model FormulaSheet {
+  id               String          @id @default(cuid())
+  title            String
+  fileUrl          String?
+  content          String?         // text/html fallback
+  subtopicId       String
+  subtopic         Subtopic        @relation(fields: [subtopicId], references: [id])
+}
+
+model UserProgress {
+  id                        String    @id @default(cuid())
+  userId                    String
+  user                      User      @relation(fields: [userId], references: [id])
+  subtopicId                String
+  subtopic                  Subtopic  @relation(fields: [subtopicId], references: [id])
+  formulaSheetRead          Boolean   @default(false)
+  practiceQuestionsCompleted Boolean   @default(false)
+  topicTestCompleted        Boolean   @default(false)
+  revisionDone              Boolean   @default(false)
+
+  @@unique([userId, subtopicId])
+}
+
+model Achievement {
+  id               String          @id @default(cuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id])
+  title            String          // e.g. "First Mock Attempted", "CAT Warrior"
+  description      String
+  unlockedAt       DateTime        @default(now())
+}
+
+model DailyGoalProgress {
+  id               String          @id @default(cuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id])
+  date             String          // "YYYY-MM-DD"
+  quantSolved      Int             @default(0)
+  varcSolved       Int             @default(0)
+  lrdiSolved       Int             @default(0)
+  quantGoal        Int             @default(10)
+  varcGoal         Int             @default(6)
+  lrdiGoal         Int             @default(4)
+
+  @@unique([userId, date])
+}

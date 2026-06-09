@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: catprep-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: catprep
+      POSTGRES_PASSWORD: catprep
+      POSTGRES_DB: catprep
+    ports:
+      - "5432:5432"
+    volumes:
+      - catprep_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U catprep -d catprep"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  catprep_pgdata:
