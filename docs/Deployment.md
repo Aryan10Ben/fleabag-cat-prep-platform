@@ -8,7 +8,7 @@ Deploy **CATPrep** to [Vercel](https://vercel.com) with a managed **PostgreSQL**
 
 ## Quick deploy (recommended)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform&env=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,SEED_DEMO_USERS&envDescription=Required%20environment%20variables%20for%20CATPrep&envLink=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform%2Fblob%2Fmain%2F.env.example&project-name=cat-prep-platform&repository-name=cat-prep-platform)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform&env=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,SEED_DEMO_USERS&envDescription=Required%20environment%20variables%20for%20CATPrep&envLink=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform%2Fblob%2Fmain%2F.env.example&project-name=fleabag-cat-prep&repository-name=cat-prep-platform)
 
 After clicking **Deploy**:
 
@@ -48,7 +48,7 @@ Use the **Deploy with Vercel** button in the [README](https://github.com/Aryan10
 |----------|-------|-------|
 | `DATABASE_URL` | Neon pooled connection string | Required |
 | `NEXTAUTH_SECRET` | Random 32+ char secret | `openssl rand -base64 32` |
-| `NEXTAUTH_URL` | `https://YOUR-PROJECT.vercel.app` | Your Vercel URL (update after first deploy) |
+| `NEXTAUTH_URL` | `https://fleabag-cat-prep.vercel.app` | Production URL |
 | `SEED_DEMO_USERS` | `false` | **Do not** seed demo passwords in production |
 | `NODE_ENV` | `production` | Optional — Vercel sets this automatically |
 
@@ -111,7 +111,7 @@ For a public demo, consider a read-only demo account with a strong unique passwo
 
 ## Step 4 — Update NEXTAUTH_URL
 
-After the first deploy, Vercel assigns a URL like `https://cat-prep-platform.vercel.app`.
+Production URL: `https://fleabag-cat-prep.vercel.app`
 
 1. Vercel → **Settings → Environment Variables**
 2. Set `NEXTAUTH_URL` to that exact URL (include `https://`)
@@ -139,7 +139,7 @@ See [`.env.example`](../.env.example) for local vs production values.
 |----------|-------|------------|
 | `DATABASE_URL` | `postgresql://catprep:catprep@localhost:5432/catprep` | Neon pooled URL |
 | `NEXTAUTH_SECRET` | any dev secret | `openssl rand -base64 32` |
-| `NEXTAUTH_URL` | `http://localhost:3000` | `https://your-app.vercel.app` |
+| `NEXTAUTH_URL` | `http://localhost:3000` | `https://fleabag-cat-prep.vercel.app` |
 | `SEED_DEMO_USERS` | `true` | `false` |
 
 ---

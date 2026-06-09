@@ -11,11 +11,11 @@
 | Links | |
 |-------|---|
 | **Repository** | [github.com/Aryan10Ben/cat-prep-platform](https://github.com/Aryan10Ben/cat-prep-platform) |
-| **Live demo** | [cat-prep-platform.vercel.app](https://cat-prep-platform.vercel.app) *(after deploy)* |
+| **Live demo** | [fleabag-cat-prep.vercel.app](https://fleabag-cat-prep.vercel.app) |
 | **Releases** | [v1.0.0](https://github.com/Aryan10Ben/cat-prep-platform/releases/tag/v1.0.0) |
 | **Issues** | [Report a bug](https://github.com/Aryan10Ben/cat-prep-platform/issues) |
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform&env=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,SEED_DEMO_USERS&envDescription=Required%20environment%20variables&envLink=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform%2Fblob%2Fmain%2F.env.example&project-name=cat-prep-platform&repository-name=cat-prep-platform)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform&env=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,SEED_DEMO_USERS&envDescription=Required%20environment%20variables&envLink=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform%2Fblob%2Fmain%2F.env.example&project-name=fleabag-cat-prep&repository-name=cat-prep-platform)
 
 ## Overview
 
@@ -88,7 +88,7 @@ Open [http://localhost:3000](http://localhost:3000).
 |----------|------------------|
 | `DATABASE_URL` | Neon **pooled** connection string + `?sslmode=require` |
 | `NEXTAUTH_SECRET` | `openssl rand -base64 32` |
-| `NEXTAUTH_URL` | `https://your-project.vercel.app` |
+| `NEXTAUTH_URL` | `https://fleabag-cat-prep.vercel.app` |
 | `SEED_DEMO_USERS` | `false` |
 
 4. **Initialize database** (one-time, from your machine):
