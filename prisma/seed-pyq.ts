@@ -111,18 +111,21 @@ export async function seedPyqPapers(prisma: PrismaClient) {
   await prisma.catPyqPaper.deleteMany({});
 
   const pyqQuestionIds: string[] = [];
+  const papersToCreate: any[] = [];
+  const sectionsToCreate: any[] = [];
+  const questionsToCreate: any[] = [];
+  const optionsToCreate: any[] = [];
+  const pyqLinksToCreate: any[] = [];
 
   for (const year of YEARS) {
     for (const slot of SLOTS) {
       const paperId = `pyq-${year}-slot${slot}`;
-      await prisma.catPyqPaper.create({
-        data: {
-          id: paperId,
-          year,
-          slot,
-          title: `CAT ${year} Slot ${slot}`,
-          status: year >= 2024 ? "PUBLISHED" : "PUBLISHED",
-        },
+      papersToCreate.push({
+        id: paperId,
+        year,
+        slot,
+        title: `CAT ${year} Slot ${slot}`,
+        status: "PUBLISHED",
       });
 
       const passageId = `pyq-rc-${year}-s${slot}`;
@@ -150,14 +153,12 @@ export async function seedPyqPapers(prisma: PrismaClient) {
       for (const section of ["VARC", "DILR", "QA"] as const) {
         const meta = SECTION_META[section];
         const sectionId = `${paperId}-${section}`;
-        await prisma.catPyqSection.create({
-          data: {
-            id: sectionId,
-            paperId,
-            section,
-            duration: meta.duration,
-            orderIndex: section === "VARC" ? 0 : section === "DILR" ? 1 : 2,
-          },
+        sectionsToCreate.push({
+          id: sectionId,
+          paperId,
+          section,
+          duration: meta.duration,
+          orderIndex: section === "VARC" ? 0 : section === "DILR" ? 1 : 2,
         });
 
         for (let order = 1; order <= meta.questionCount; order++) {
@@ -168,43 +169,45 @@ export async function seedPyqPapers(prisma: PrismaClient) {
 
           pyqQuestionIds.push(qData.id);
 
-          await prisma.question.upsert({
-            where: { id: qData.id },
-            create: {
-              id: qData.id,
-              content: qData.content,
-              type: qData.type,
-              difficulty: qData.difficulty,
-              solution: qData.solution,
-              rcPassageId: (qData as any).rcPassageId || null,
-              lrdiSetId: (qData as any).lrdiSetId || null,
-              tableJson: (qData as any).tableJson || null,
-            },
-            update: {},
+          questionsToCreate.push({
+            id: qData.id,
+            content: qData.content,
+            type: qData.type,
+            difficulty: qData.difficulty,
+            solution: qData.solution,
+            rcPassageId: (qData as any).rcPassageId || null,
+            lrdiSetId: (qData as any).lrdiSetId || null,
+            tableJson: (qData as any).tableJson || null,
           });
 
           for (const opt of qData.options) {
-            await prisma.option.upsert({
-              where: { id: opt.id },
-              create: opt,
-              update: {},
-            });
+            optionsToCreate.push(opt);
           }
 
-          await prisma.catPyqQuestion.create({
-            data: {
-              id: `pyq-link-${qData.id}`,
-              sectionId,
-              questionId: qData.id,
-              order,
-              setGroupId:
-                section === "VARC" ? passageId : section === "DILR" ? lrdiSetId : null,
-            },
+          pyqLinksToCreate.push({
+            id: `pyq-link-${qData.id}`,
+            sectionId,
+            questionId: qData.id,
+            order,
+            setGroupId:
+              section === "VARC" ? passageId : section === "DILR" ? lrdiSetId : null,
           });
         }
       }
     }
   }
+
+  // Batch insert using createMany
+  console.log("Inserting PYQ papers...");
+  await prisma.catPyqPaper.createMany({ data: papersToCreate });
+  console.log("Inserting PYQ sections...");
+  await prisma.catPyqSection.createMany({ data: sectionsToCreate });
+  console.log("Inserting PYQ questions...");
+  await prisma.question.createMany({ data: questionsToCreate });
+  console.log("Inserting PYQ options...");
+  await prisma.option.createMany({ data: optionsToCreate });
+  console.log("Inserting PYQ question links...");
+  await prisma.catPyqQuestion.createMany({ data: pyqLinksToCreate });
 
   console.log(`Seeded ${YEARS.length * SLOTS.length} PYQ papers with ${pyqQuestionIds.length} original placeholder questions.`);
 }

@@ -7,7 +7,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import DailyGoalModal from "@/components/DailyGoalModal";
 
-export default function Navbar() {
+interface NavbarProps {
+  isSidebarOpen: boolean;
+  onToggleSidebar: () => void;
+}
+
+export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [solvedToday, setSolvedToday] = useState(8);
@@ -118,11 +123,25 @@ export default function Navbar() {
   }
 
   return (
-    <header className="h-16 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-6 sticky top-0 z-40">
+    <header className="h-16 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-4 md:px-6 sticky top-0 z-40">
       {/* Session/Topic Context Indicator */}
-      <div className="flex items-center gap-6">
-        <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-blue-500" />
+      <div className="flex items-center gap-3 md:gap-4">
+        {/* Toggle Sidebar Button (3-dash hamburger) */}
+        <button
+          onClick={onToggleSidebar}
+          className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-xs hover:text-slate-900 dark:hover:text-slate-100 transition-all flex items-center justify-center focus:outline-none cursor-pointer"
+          aria-label="Toggle Sidebar"
+        >
+          {/* Animated Hamburger Icon */}
+          <div className="relative w-5 h-4 flex flex-col justify-between items-center group">
+            <span className={`w-5 h-0.5 bg-current rounded-full transition-all duration-350 ease-out origin-center ${isSidebarOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />
+            <span className={`w-5 h-0.5 bg-current rounded-full transition-all duration-350 ease-out ${isSidebarOpen ? 'opacity-0 scale-x-0' : ''}`} />
+            <span className={`w-5 h-0.5 bg-current rounded-full transition-all duration-350 ease-out origin-center ${isSidebarOpen ? '-rotate-45 -translate-y-[7px]' : ''}`} />
+          </div>
+        </button>
+
+        <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-blue-500 hidden sm:inline" />
           <span>{currentDate || "June 9, 2026"}</span>
         </span>
         <div className="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-400 dark:text-slate-500">
