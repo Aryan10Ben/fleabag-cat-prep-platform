@@ -1,118 +1,169 @@
 # Deployment Guide
 
-Deploy CATPrep to **Vercel** with a **PostgreSQL** database for production.
+Deploy **CATPrep** to [Vercel](https://vercel.com) with a managed **PostgreSQL** database.
 
-## Overview
+**Repository:** [github.com/Aryan10Ben/cat-prep-platform](https://github.com/Aryan10Ben/cat-prep-platform)
 
-| Component | Recommendation |
-|-----------|----------------|
-| Hosting | [Vercel](https://vercel.com) |
-| Database | [Neon](https://neon.tech), [Supabase](https://supabase.com), or [Railway](https://railway.app) |
-| Auth | NextAuth.js with secure `NEXTAUTH_SECRET` |
+---
 
-## 1. Prepare PostgreSQL
+## Quick deploy (recommended)
 
-1. Create a PostgreSQL database on your provider.
-2. Copy the connection string (pooling URL recommended for serverless).
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform&env=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,SEED_DEMO_USERS&envDescription=Required%20environment%20variables%20for%20CATPrep&envLink=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform%2Fblob%2Fmain%2F.env.example&project-name=cat-prep-platform&repository-name=cat-prep-platform)
 
-Example:
+After clicking **Deploy**:
 
-```
-postgresql://user:password@ep-xxx.region.aws.neon.tech/catprep?sslmode=require
-```
+1. Create a free PostgreSQL database on [Neon](https://neon.tech) (see Step 1 below).
+2. Fill in the environment variables Vercel prompts for.
+3. After the first deploy succeeds, run the one-time database setup (Step 3).
 
-## 2. Update Prisma for Production
+---
 
-In `prisma/schema.prisma`, change the datasource provider:
+## Step 1 — Create production PostgreSQL (Neon)
 
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+1. Sign up at [neon.tech](https://neon.tech) → **New Project** → name it `catprep`.
+2. Open **Connection Details** and copy:
+   - **Pooled connection** → use as `DATABASE_URL` on Vercel
+   - Append `?sslmode=require` if not already present
+3. Example:
+
+```env
+DATABASE_URL=postgresql://catprep_owner:YOUR_PASSWORD@ep-cool-name-12345678.us-east-2.aws.neon.tech/neondb?sslmode=require
 ```
 
-Run migrations locally against your production DB (one-time setup):
+> **Tip:** Use the **pooled** URL for Vercel serverless. Neon labels it “Connection pooling” in the dashboard.
 
-```bash
-npx prisma db push
-# Or for migration history:
-# npx prisma migrate deploy
-```
+---
 
-Seed production data if needed:
+## Step 2 — Deploy to Vercel
 
-```bash
-npm run db:seed
-```
+### Option A: One-click (GitHub already connected)
 
-> **Warning**: The seed script clears existing data. Run only on a fresh database.
+Use the **Deploy with Vercel** button in the [README](https://github.com/Aryan10Ben/cat-prep-platform#quick-start) or import manually:
 
-## 3. Deploy to Vercel
+1. Go to [vercel.com/new](https://vercel.com/new)
+2. Import **Aryan10Ben/cat-prep-platform**
+3. Add environment variables (Production + Preview):
 
-### Option A: Vercel CLI
+| Variable | Value | Notes |
+|----------|-------|-------|
+| `DATABASE_URL` | Neon pooled connection string | Required |
+| `NEXTAUTH_SECRET` | Random 32+ char secret | `openssl rand -base64 32` |
+| `NEXTAUTH_URL` | `https://YOUR-PROJECT.vercel.app` | Your Vercel URL (update after first deploy) |
+| `SEED_DEMO_USERS` | `false` | **Do not** seed demo passwords in production |
+| `NODE_ENV` | `production` | Optional — Vercel sets this automatically |
+
+4. Click **Deploy**
+
+### Option B: Vercel CLI
 
 ```bash
 npm i -g vercel
 vercel login
-vercel
+vercel link
+vercel env add DATABASE_URL production
+vercel env add NEXTAUTH_SECRET production
+vercel env add NEXTAUTH_URL production
+vercel env add SEED_DEMO_USERS production   # enter: false
+vercel --prod
 ```
 
-### Option B: GitHub Integration
+---
 
-1. Push your repository to GitHub.
-2. Import the project at [vercel.com/new](https://vercel.com/new).
-3. Vercel auto-detects Next.js settings.
+## Step 3 — Initialize the production database (one-time)
 
-## 4. Configure Environment Variables
+Vercel builds do **not** run migrations automatically. From your machine:
 
-In the Vercel project dashboard → **Settings → Environment Variables**, add:
+```bash
+# Clone and install
+git clone https://github.com/Aryan10Ben/cat-prep-platform.git
+cd cat-prep-platform
+npm install
 
-| Variable | Value |
-|----------|-------|
-| `DATABASE_URL` | Your PostgreSQL connection string |
-| `NEXTAUTH_SECRET` | Strong random secret (`openssl rand -base64 32`) |
-| `NEXTAUTH_URL` | `https://your-domain.vercel.app` |
-| `NODE_ENV` | `production` |
+# Point at production Neon database
+export DATABASE_URL="postgresql://..."   # Neon pooled URL
+export SEED_DEMO_USERS=false             # no demo accounts in prod
 
-Redeploy after adding variables.
+# Push schema + seed question bank
+npx prisma db push
+npm run db:seed
+```
 
-## 5. Build Settings
+Or use the helper script:
 
-Vercel defaults work for Next.js. Ensure:
+```bash
+chmod +x scripts/setup-production-db.sh
+DATABASE_URL="postgresql://..." SEED_DEMO_USERS=false ./scripts/setup-production-db.sh
+```
 
-- **Build Command**: `npm run build` (default)
-- **Install Command**: `npm install` (runs `postinstall` → `prisma generate`)
-- **Output Directory**: `.next` (automatic)
+> **Warning:** `db:seed` clears all existing data. Run only on a fresh database.
 
-## 6. Post-Deploy Checklist
+### Create your own admin user (production)
 
-- [ ] Landing page loads at production URL
-- [ ] Login works with seeded or registered users
-- [ ] Dashboard fetches progress and analytics
-- [ ] Mock test submission saves attempts
-- [ ] PYQ exam session persists across refresh
-- [ ] Admin panel restricted to admin role (harden before public launch)
+After seeding without demo users, register via SQL or add a user script. Quickest path for a fresh deploy with demo content for testing:
 
-## Custom Domain
+```bash
+SEED_DEMO_USERS=true npm run db:seed   # only on empty DB, then change passwords
+```
 
-1. Vercel → Project → **Domains**
-2. Add your domain and configure DNS records
-3. Update `NEXTAUTH_URL` to match the custom domain
+For a public demo, consider a read-only demo account with a strong unique password.
 
-## CI / Preview Deployments
+---
 
-Preview deployments on pull requests inherit environment variables. For preview DB isolation:
+## Step 4 — Update NEXTAUTH_URL
 
-- Use a separate `DATABASE_URL` for Preview environment in Vercel
-- Or use Neon branch databases per preview
+After the first deploy, Vercel assigns a URL like `https://cat-prep-platform.vercel.app`.
 
-## Monitoring
+1. Vercel → **Settings → Environment Variables**
+2. Set `NEXTAUTH_URL` to that exact URL (include `https://`)
+3. **Redeploy** (Deployments → ⋯ → Redeploy)
 
-- Enable Vercel Analytics for Web Vitals
-- Connect Sentry or similar for error tracking (not included in v1.0.0)
-- Monitor database connection limits on serverless PostgreSQL
+Login will fail if `NEXTAUTH_URL` does not match your live domain.
+
+---
+
+## Step 5 — Verify
+
+- [ ] `https://your-app.vercel.app` — landing page loads
+- [ ] `/login` — sign-in works
+- [ ] `/dashboard` — progress data loads (requires seeded DB)
+- [ ] `/mock-tests` — catalog appears
+- [ ] `/admin` — redirects non-admins to dashboard
+
+---
+
+## Environment variable reference
+
+See [`.env.example`](../.env.example) for local vs production values.
+
+| Variable | Local | Production |
+|----------|-------|------------|
+| `DATABASE_URL` | `postgresql://catprep:catprep@localhost:5432/catprep` | Neon pooled URL |
+| `NEXTAUTH_SECRET` | any dev secret | `openssl rand -base64 32` |
+| `NEXTAUTH_URL` | `http://localhost:3000` | `https://your-app.vercel.app` |
+| `SEED_DEMO_USERS` | `true` | `false` |
+
+---
+
+## Custom domain
+
+1. Vercel → **Domains** → add your domain
+2. Update `NEXTAUTH_URL` to `https://yourdomain.com`
+3. Redeploy
+
+---
+
+## Troubleshooting
+
+| Issue | Fix |
+|-------|-----|
+| Build fails on Prisma | Ensure `postinstall` runs (`prisma generate`). Check `DATABASE_URL` is set in Vercel. |
+| `Environment variable not found: DATABASE_URL` | Add `DATABASE_URL` in Vercel env vars, redeploy. |
+| Login redirects loop | `NEXTAUTH_URL` must match live URL exactly. |
+| Empty dashboard / 401 | Run `prisma db push` + `db:seed` against production DB. |
+| Connection pool timeout | Use Neon **pooled** connection string, not direct. |
+
+---
 
 ## Rollback
 
-Vercel keeps deployment history. Roll back instantly from the **Deployments** tab if a release fails.
+Vercel → **Deployments** → select a previous deployment → **Promote to Production**.

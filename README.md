@@ -1,40 +1,37 @@
 # CATPrep – Progress Driven CAT Preparation Platform
 
+[![GitHub](https://img.shields.io/badge/GitHub-Aryan10Ben%2Fcat--prep--platform-181717?logo=github)](https://github.com/Aryan10Ben/cat-prep-platform)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748)](https://www.prisma.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
+**CATPrep** is an open-source CAT (Common Admission Test) preparation platform — structured practice, full mocks, previous-year paper simulation, and progress analytics.
+
+| Links | |
+|-------|---|
+| **Repository** | [github.com/Aryan10Ben/cat-prep-platform](https://github.com/Aryan10Ben/cat-prep-platform) |
+| **Live demo** | [cat-prep-platform.vercel.app](https://cat-prep-platform.vercel.app) *(after deploy)* |
+| **Releases** | [v1.0.0](https://github.com/Aryan10Ben/cat-prep-platform/releases/tag/v1.0.0) |
+| **Issues** | [Report a bug](https://github.com/Aryan10Ben/cat-prep-platform/issues) |
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform&env=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,SEED_DEMO_USERS&envDescription=Required%20environment%20variables&envLink=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform%2Fblob%2Fmain%2F.env.example&project-name=cat-prep-platform&repository-name=cat-prep-platform)
+
 ## Overview
 
-**CATPrep** is a full-stack CAT (Common Admission Test) preparation platform built for serious MBA aspirants who want measurable progress—not just more questions.
+CATPrep helps MBA aspirants prepare systematically by combining structured topic practice, realistic mock tests, previous-year paper simulation, and data-driven performance analytics.
 
-### Purpose
-
-CATPrep helps students prepare systematically for India's most competitive MBA entrance exam by combining structured topic practice, realistic mock tests, previous-year paper simulation, and data-driven performance analytics in one place.
-
-### Target Audience
-
-- CAT aspirants targeting IIMs and top B-schools
-- Students who want section-wise mastery (Quant, VARC, LRDI)
-- Learners who benefit from streaks, daily goals, and progress dashboards
-
-### Problem Being Solved
-
-Most CAT prep tools either dump question banks without structure or offer mocks without actionable feedback. CATPrep bridges that gap with a **progress-driven workflow**: formula sheets → practice → subtopic tests → section mocks → full mocks → PYQ analysis—so every study session moves the needle.
+**Progress-driven workflow:** formula sheets → practice → subtopic tests → section mocks → full mocks → PYQ analysis.
 
 ## Features
 
-- **Full Mock Tests** — Timed full-length CAT simulations with scoring and percentile estimates
-- **Quant Section** — Topic-wise subtopics, formula sheets, practice, and tests
-- **VARC Section** — Reading comprehension, para jumbles, and verbal practice flows
-- **LRDI Section** — Logic sets, caselets, and structured DILR practice
+- **Full Mock Tests** — Timed CAT simulations with scoring and percentile estimates
+- **Quant / VARC / LRDI** — Topic-wise subtopics, formula sheets, practice, and tests
 - **Previous Year CAT Papers** — Slot-wise PYQ mocks (2020–2025) with CAT-style exam UI
-- **Progress Tracking** — Subtopic checklists and completion states per section
+- **Progress Tracking** — Subtopic checklists and completion states
 - **Performance Analytics** — Section strengths, trends, and attempt history
-- **User Dashboard** — Daily goals, streaks, quotes, and quick navigation
-- **Streak Tracking** — Consistency rewards for daily practice
-- **CAT-inspired Exam Interface** — Section timers, palette navigation, and review flags
+- **Dashboard** — Daily goals, streaks, and quick navigation
+- **CAT-inspired Exam Interface** — Section timers, palette navigation, review flags
 
 ## Tech Stack
 
@@ -42,8 +39,8 @@ Most CAT prep tools either dump question banks without structure or offer mocks 
 |-------|------------|
 | **Frontend** | Next.js, React, TypeScript, Tailwind CSS |
 | **Backend** | Node.js (Next.js App Router API routes) |
-| **Database** | PostgreSQL / Prisma |
-| **Authentication** | JWT via NextAuth.js (Credentials provider) |
+| **Database** | PostgreSQL, Prisma |
+| **Authentication** | JWT via NextAuth.js |
 | **Deployment** | Vercel |
 
 ## Screenshots
@@ -57,86 +54,78 @@ Most CAT prep tools either dump question banks without structure or offer mocks 
 ### Dashboard
 ![Dashboard](./screenshots/dashboard.png)
 
-### Quant Section
-![Quant](./screenshots/quant.png)
+> More screenshots: [screenshots/CAPTURE_GUIDE.md](./screenshots/CAPTURE_GUIDE.md)
 
-### Previous Year Papers
-![Previous Year](./screenshots/previous-year.png)
-
-### Performance Analytics
-![Analytics](./screenshots/performance.png)
-
-> Additional screenshots: see [screenshots/CAPTURE_GUIDE.md](./screenshots/CAPTURE_GUIDE.md) for remaining captures (`varc`, `lrdi`, `mock-test`, `profile`).
-
-## Quick Start
+## Quick Start (Local)
 
 ```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/cat-prep-platform.git
+git clone https://github.com/Aryan10Ben/cat-prep-platform.git
 cd cat-prep-platform
-
-# Install dependencies
 npm install
-
-# Configure environment
 cp .env.example .env
-
-# Start PostgreSQL and set up database
-npm run db:up
+npm run db:up          # requires Docker
 npm run db:push
 npm run db:seed
-
-# Start development server
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-**Demo credentials** (after seeding):
+**Demo credentials** (when `SEED_DEMO_USERS=true` during seed):
 
 | Role | Email | Password |
 |------|-------|----------|
 | User | `user@test.com` | `password123` |
 | Admin | `admin@test.com` | `password123` |
 
+## Deploy to Vercel (Production)
+
+1. **Create a Neon PostgreSQL database** — [neon.tech](https://neon.tech) (free tier)
+2. **Deploy** — click the **Deploy with Vercel** button above, or import [the repo](https://github.com/Aryan10Ben/cat-prep-platform) at [vercel.com/new](https://vercel.com/new)
+3. **Set environment variables** in Vercel:
+
+| Variable | Production value |
+|----------|------------------|
+| `DATABASE_URL` | Neon **pooled** connection string + `?sslmode=require` |
+| `NEXTAUTH_SECRET` | `openssl rand -base64 32` |
+| `NEXTAUTH_URL` | `https://your-project.vercel.app` |
+| `SEED_DEMO_USERS` | `false` |
+
+4. **Initialize database** (one-time, from your machine):
+
+```bash
+export DATABASE_URL="your-neon-pooled-url"
+npx prisma db push
+SEED_DEMO_USERS=false npm run db:seed
+```
+
+5. **Redeploy** after setting `NEXTAUTH_URL` to your live Vercel URL.
+
+Full guide: [docs/Deployment.md](./docs/Deployment.md)
+
 ## Documentation
 
-- [Installation Guide](./docs/Installation.md) — Local setup in detail
-- [Deployment Guide](./docs/Deployment.md) — Deploy to Vercel with PostgreSQL
-- [Architecture](./docs/Architecture.md) — Folder structure, routing, and database design
-- [Screenshot Guide](./screenshots/CAPTURE_GUIDE.md) — Capture marketing screenshots
+- [Installation](./docs/Installation.md) — Local development
+- [Deployment](./docs/Deployment.md) — Vercel + Neon production setup
+- [Architecture](./docs/Architecture.md) — System design
 - [Changelog](./CHANGELOG.md) — Release history
-
-## Project Structure
-
-```
-cat-prep-platform/
-├── src/
-│   ├── app/              # Next.js App Router pages & API routes
-│   ├── components/       # Reusable UI components
-│   ├── lib/              # Auth, Prisma, PYQ utilities
-│   ├── config/           # App configuration
-│   └── types/            # TypeScript declarations
-├── prisma/               # Schema, migrations, seed scripts
-├── public/               # Static assets
-├── screenshots/          # README & marketing screenshots
-├── docs/                 # Extended documentation
-├── .env.example          # Environment variable template
-├── package.json
-└── tsconfig.json
-```
 
 ## Scripts
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server |
+| `npm run dev` | Development server |
 | `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run db:push` | Push Prisma schema to database |
-| `npm run db:seed` | Seed topics, questions, and demo users |
+| `npm run lint` | ESLint |
+| `npm run db:up` | Start local Postgres (Docker) |
+| `npm run db:push` | Push Prisma schema |
+| `npm run db:seed` | Seed questions & optional demo users |
+| `npm run test:e2e` | Playwright E2E tests |
+
+## Contributing
+
+Contributions welcome! Open an [issue](https://github.com/Aryan10Ben/cat-prep-platform/issues) or [pull request](https://github.com/Aryan10Ben/cat-prep-platform/pulls).
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+[MIT](./LICENSE) © 2026 CATPrep Contributors

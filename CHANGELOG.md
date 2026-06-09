@@ -45,4 +45,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Mobile UX**: Exam interface is optimized for desktop; mobile polish is incomplete.
 - **Admin authorization**: Admin routes should be hardened with role-based middleware before public deployment.
 
-[1.0.0]: https://github.com/YOUR_USERNAME/cat-prep-platform/releases/tag/v1.0.0
+[1.0.0]: https://github.com/Aryan10Ben/cat-prep-platform/releases/tag/v1.0.0

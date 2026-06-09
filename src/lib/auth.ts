@@ -5,6 +5,8 @@ import { checkRateLimit, RATE_LIMITS } from "./rate-limit";
 import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
+  // Required for Vercel / reverse-proxy deployments
+  ...(process.env.NODE_ENV === "production" && { trustHost: true }),
   providers: [
     CredentialsProvider({
       name: "Credentials",

@@ -13,7 +13,7 @@ PostgreSQL is required. The easiest local setup uses Docker Compose (included in
 ## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/cat-prep-platform.git
+git clone https://github.com/Aryan10Ben/cat-prep-platform.git
 cd cat-prep-platform
 ```
 

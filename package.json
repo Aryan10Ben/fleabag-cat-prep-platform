@@ -1,7 +1,16 @@
 {
   "name": "cat-prep-platform",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
+  "description": "Progress-driven CAT exam preparation platform with mocks, PYQ papers, analytics, and streak tracking.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Aryan10Ben/cat-prep-platform.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Aryan10Ben/cat-prep-platform/issues"
+  },
+  "homepage": "https://github.com/Aryan10Ben/cat-prep-platform#readme",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
