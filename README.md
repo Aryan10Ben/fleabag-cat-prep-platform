@@ -1,6 +1,6 @@
 # CATPrep – Progress Driven CAT Preparation Platform
 
-[![GitHub](https://img.shields.io/badge/GitHub-Aryan10Ben%2Fcat--prep--platform-181717?logo=github)](https://github.com/Aryan10Ben/cat-prep-platform)
+[![GitHub](https://img.shields.io/badge/GitHub-Aryan10Ben%2Ffleabag--cat--prep--platform-181717?logo=github)](https://github.com/Aryan10Ben/fleabag-cat-prep-platform)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748)](https://www.prisma.io/)
@@ -10,12 +10,12 @@
 
 | Links | |
 |-------|---|
-| **Repository** | [github.com/Aryan10Ben/cat-prep-platform](https://github.com/Aryan10Ben/cat-prep-platform) |
-| **Live demo** | [fleabag-cat-prep.vercel.app](https://fleabag-cat-prep.vercel.app) |
-| **Releases** | [v1.0.0](https://github.com/Aryan10Ben/cat-prep-platform/releases/tag/v1.0.0) |
-| **Issues** | [Report a bug](https://github.com/Aryan10Ben/cat-prep-platform/issues) |
+| **Repository** | [github.com/Aryan10Ben/fleabag-cat-prep-platform](https://github.com/Aryan10Ben/fleabag-cat-prep-platform) |
+| **Live demo** | [fleabag1-cat-prep-platform.vercel.app](https://fleabag1-cat-prep-platform.vercel.app) |
+| **Releases** | [v1.0.0](https://github.com/Aryan10Ben/fleabag-cat-prep-platform/releases/tag/v1.0.0) |
+| **Issues** | [Report a bug](https://github.com/Aryan10Ben/fleabag-cat-prep-platform/issues) |
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform&env=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,SEED_DEMO_USERS&envDescription=Required%20environment%20variables&envLink=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform%2Fblob%2Fmain%2F.env.example&project-name=fleabag-cat-prep&repository-name=cat-prep-platform)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Ffleabag-cat-prep-platform&env=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,SEED_DEMO_USERS&envDescription=Required%20environment%20variables&envLink=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Ffleabag-cat-prep-platform%2Fblob%2Fmain%2F.env.example&project-name=fleabag-cat-prep&repository-name=fleabag-cat-prep-platform)
 
 ## Overview
 
@@ -59,8 +59,8 @@ CATPrep helps MBA aspirants prepare systematically by combining structured topic
 ## Quick Start (Local)
 
 ```bash
-git clone https://github.com/Aryan10Ben/cat-prep-platform.git
-cd cat-prep-platform
+git clone https://github.com/Aryan10Ben/fleabag-cat-prep-platform.git
+cd fleabag-cat-prep-platform
 npm install
 cp .env.example .env
 npm run db:up          # requires Docker
@@ -81,14 +81,14 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Deploy to Vercel (Production)
 
 1. **Create a Neon PostgreSQL database** — [neon.tech](https://neon.tech) (free tier)
-2. **Deploy** — click the **Deploy with Vercel** button above, or import [the repo](https://github.com/Aryan10Ben/cat-prep-platform) at [vercel.com/new](https://vercel.com/new)
+2. **Deploy** — click the **Deploy with Vercel** button above, or import [the repo](https://github.com/Aryan10Ben/fleabag-cat-prep-platform) at [vercel.com/new](https://vercel.com/new)
 3. **Set environment variables** in Vercel:
 
 | Variable | Production value |
 |----------|------------------|
 | `DATABASE_URL` | Neon **pooled** connection string + `?sslmode=require` |
 | `NEXTAUTH_SECRET` | `openssl rand -base64 32` |
-| `NEXTAUTH_URL` | `https://fleabag-cat-prep.vercel.app` |
+| `NEXTAUTH_URL` | `https://fleabag1-cat-prep-platform.vercel.app` |
 | `SEED_DEMO_USERS` | `false` |
 
 4. **Initialize database** (one-time, from your machine):
@@ -124,7 +124,7 @@ Full guide: [docs/Deployment.md](./docs/Deployment.md)
 
 ## Contributing
 
-Contributions welcome! Open an [issue](https://github.com/Aryan10Ben/cat-prep-platform/issues) or [pull request](https://github.com/Aryan10Ben/cat-prep-platform/pulls).
+Contributions welcome! Open an [issue](https://github.com/Aryan10Ben/fleabag-cat-prep-platform/issues) or [pull request](https://github.com/Aryan10Ben/fleabag-cat-prep-platform/pulls).
 
 ## License
 

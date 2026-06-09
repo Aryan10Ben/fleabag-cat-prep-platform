@@ -2,7 +2,7 @@
 # Deploy CATPrep to Vercel. Requires: vercel login OR VERCEL_TOKEN env var
 set -euo pipefail
 
-PRODUCTION_URL="https://fleabag-cat-prep.vercel.app"
+PRODUCTION_URL="https://fleabag1-cat-prep-platform.vercel.app"
 PROJECT_NAME="fleabag-cat-prep"
 
 echo "==> CATPrep Vercel deploy"

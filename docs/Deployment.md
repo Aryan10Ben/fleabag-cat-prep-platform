@@ -2,13 +2,13 @@
 
 Deploy **CATPrep** to [Vercel](https://vercel.com) with a managed **PostgreSQL** database.
 
-**Repository:** [github.com/Aryan10Ben/cat-prep-platform](https://github.com/Aryan10Ben/cat-prep-platform)
+**Repository:** [github.com/Aryan10Ben/fleabag-cat-prep-platform](https://github.com/Aryan10Ben/fleabag-cat-prep-platform)
 
 ---
 
 ## Quick deploy (recommended)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform&env=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,SEED_DEMO_USERS&envDescription=Required%20environment%20variables%20for%20CATPrep&envLink=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Fcat-prep-platform%2Fblob%2Fmain%2F.env.example&project-name=fleabag-cat-prep&repository-name=cat-prep-platform)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Ffleabag-cat-prep-platform&env=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,SEED_DEMO_USERS&envDescription=Required%20environment%20variables%20for%20CATPrep&envLink=https%3A%2F%2Fgithub.com%2FAryan10Ben%2Ffleabag-cat-prep-platform%2Fblob%2Fmain%2F.env.example&project-name=fleabag-cat-prep&repository-name=fleabag-cat-prep-platform)
 
 After clicking **Deploy**:
 
@@ -38,17 +38,17 @@ DATABASE_URL=postgresql://catprep_owner:YOUR_PASSWORD@ep-cool-name-12345678.us-e
 
 ### Option A: One-click (GitHub already connected)
 
-Use the **Deploy with Vercel** button in the [README](https://github.com/Aryan10Ben/cat-prep-platform#quick-start) or import manually:
+Use the **Deploy with Vercel** button in the [README](https://github.com/Aryan10Ben/fleabag-cat-prep-platform#quick-start) or import manually:
 
 1. Go to [vercel.com/new](https://vercel.com/new)
-2. Import **Aryan10Ben/cat-prep-platform**
+2. Import **Aryan10Ben/fleabag-cat-prep-platform**
 3. Add environment variables (Production + Preview):
 
 | Variable | Value | Notes |
 |----------|-------|-------|
 | `DATABASE_URL` | Neon pooled connection string | Required |
 | `NEXTAUTH_SECRET` | Random 32+ char secret | `openssl rand -base64 32` |
-| `NEXTAUTH_URL` | `https://fleabag-cat-prep.vercel.app` | Production URL |
+| `NEXTAUTH_URL` | `https://fleabag1-cat-prep-platform.vercel.app` | Production URL |
 | `SEED_DEMO_USERS` | `false` | **Do not** seed demo passwords in production |
 | `NODE_ENV` | `production` | Optional — Vercel sets this automatically |
 
@@ -75,8 +75,8 @@ Vercel builds do **not** run migrations automatically. From your machine:
 
 ```bash
 # Clone and install
-git clone https://github.com/Aryan10Ben/cat-prep-platform.git
-cd cat-prep-platform
+git clone https://github.com/Aryan10Ben/fleabag-cat-prep-platform.git
+cd fleabag-cat-prep-platform
 npm install
 
 # Point at production Neon database
@@ -111,7 +111,7 @@ For a public demo, consider a read-only demo account with a strong unique passwo
 
 ## Step 4 — Update NEXTAUTH_URL
 
-Production URL: `https://fleabag-cat-prep.vercel.app`
+Production URL: `https://fleabag1-cat-prep-platform.vercel.app`
 
 1. Vercel → **Settings → Environment Variables**
 2. Set `NEXTAUTH_URL` to that exact URL (include `https://`)
@@ -139,7 +139,7 @@ See [`.env.example`](../.env.example) for local vs production values.
 |----------|-------|------------|
 | `DATABASE_URL` | `postgresql://catprep:catprep@localhost:5432/catprep` | Neon pooled URL |
 | `NEXTAUTH_SECRET` | any dev secret | `openssl rand -base64 32` |
-| `NEXTAUTH_URL` | `http://localhost:3000` | `https://fleabag-cat-prep.vercel.app` |
+| `NEXTAUTH_URL` | `http://localhost:3000` | `https://fleabag1-cat-prep-platform.vercel.app` |
 | `SEED_DEMO_USERS` | `true` | `false` |
 
 ---

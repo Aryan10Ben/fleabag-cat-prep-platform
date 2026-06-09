@@ -13,8 +13,8 @@ PostgreSQL is required. The easiest local setup uses Docker Compose (included in
 ## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Aryan10Ben/cat-prep-platform.git
-cd cat-prep-platform
+git clone https://github.com/Aryan10Ben/fleabag-cat-prep-platform.git
+cd fleabag-cat-prep-platform
 ```
 
 ## 2. Install Dependencies
