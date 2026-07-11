@@ -185,7 +185,11 @@ export default function Dashboard() {
   const remaining = Math.max(0, dailyGoal - solvedToday);
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+      {/* Page identity breadcrumb/label */}
+      <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 select-none">
+        CATPrep / Dashboard
+      </div>
       
       {/* Header welcome banner */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-950 p-6 md:p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden">
@@ -229,15 +233,15 @@ export default function Dashboard() {
 
       <Link
         href="/pyq"
-        className="block p-5 rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-slate-950 dark:to-indigo-950/30 hover:border-indigo-400 transition-all"
+        className="block p-5 rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-slate-950 dark:to-indigo-950/30 hover:border-indigo-400 dark:hover:border-indigo-700 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 group"
       >
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold text-indigo-600 uppercase">Previous Year CAT</p>
+            <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase">Previous Year CAT</p>
             <h3 className="text-lg font-bold mt-1">18 Full PYQ Mocks (2020–2025)</h3>
-            <p className="text-xs text-slate-500 mt-1">3 sections · 120 min · Slot-wise papers with analysis</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">3 sections · 120 min · Slot-wise papers with analysis</p>
           </div>
-          <ArrowRight className="h-5 w-5 text-indigo-600" />
+          <ArrowRight className="h-5 w-5 text-indigo-600 dark:text-indigo-405 group-hover:translate-x-0.5 transition-all duration-300" />
         </div>
       </Link>
 
@@ -294,49 +298,58 @@ export default function Dashboard() {
           <div className="grid md:grid-cols-3 gap-6">
             <Link
               href="/quant"
-              className="p-5 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-blue-500/30 transition-all flex flex-col justify-between h-40 group shadow-sm"
+              className="p-5 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-blue-500/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 flex flex-col justify-between h-40 group shadow-sm"
             >
               <div className="flex justify-between items-start">
                 <div className="h-9 w-9 bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center">
                   <Zap className="h-5 w-5" />
                 </div>
-                <span className="text-xs text-blue-600 dark:text-blue-400 font-bold">{quant}%</span>
+                <ArrowRight className="h-5 w-5 text-slate-400 dark:text-slate-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all duration-300" />
               </div>
               <div>
-                <h3 className="text-sm font-bold group-hover:text-blue-600 transition-colors">Quant Preparation</h3>
-                <p className="text-[11px] text-slate-400 mt-1">Arithmetic, Algebra, Geometry...</p>
+                <div className="flex items-center justify-between mt-2">
+                  <h3 className="text-sm font-bold group-hover:text-blue-600 transition-colors">Quant Preparation</h3>
+                  <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Continue &rarr;</span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Arithmetic, Algebra, Geometry +2 more</p>
               </div>
             </Link>
 
             <Link
               href="/varc"
-              className="p-5 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-indigo-500/30 transition-all flex flex-col justify-between h-40 group shadow-sm"
+              className="p-5 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-indigo-500/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 flex flex-col justify-between h-40 group shadow-sm"
             >
               <div className="flex justify-between items-start">
                 <div className="h-9 w-9 bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center">
                   <BookOpen className="h-5 w-5" />
                 </div>
-                <span className="text-xs text-indigo-600 dark:text-indigo-400 font-bold">{varc}%</span>
+                <ArrowRight className="h-5 w-5 text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all duration-300" />
               </div>
               <div>
-                <h3 className="text-sm font-bold group-hover:text-indigo-600 transition-colors">VARC Preparation</h3>
-                <p className="text-[11px] text-slate-400 mt-1">Reading Comprehension, VA...</p>
+                <div className="flex items-center justify-between mt-2">
+                  <h3 className="text-sm font-bold group-hover:text-indigo-600 transition-colors">VARC Preparation</h3>
+                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Continue &rarr;</span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Reading Comprehension, Verbal Ability</p>
               </div>
             </Link>
 
             <Link
               href="/lrdi"
-              className="p-5 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-emerald-500/30 transition-all flex flex-col justify-between h-40 group shadow-sm"
+              className="p-5 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-emerald-500/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 flex flex-col justify-between h-40 group shadow-sm"
             >
               <div className="flex justify-between items-start">
                 <div className="h-9 w-9 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center">
                   <TrendingUp className="h-5 w-5" />
                 </div>
-                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">{lrdi}%</span>
+                <ArrowRight className="h-5 w-5 text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all duration-300" />
               </div>
               <div>
-                <h3 className="text-sm font-bold group-hover:text-emerald-600 transition-colors">LRDI Preparation</h3>
-                <p className="text-[11px] text-slate-400 mt-1">Matrix Arrangements, Venns...</p>
+                <div className="flex items-center justify-between mt-2">
+                  <h3 className="text-sm font-bold group-hover:text-emerald-600 transition-colors">LRDI Preparation</h3>
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Continue &rarr;</span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Logical Reasoning, Data Interpretation</p>
               </div>
             </Link>
           </div>
@@ -406,12 +419,12 @@ export default function Dashboard() {
             <div className="space-y-4">
               <div className="flex justify-between items-baseline">
                 <span className="text-3xl font-black">{solvedToday} / {dailyGoal}</span>
-                <span className="text-xs text-slate-400">Questions solved today</span>
+                <span className="text-xs text-slate-650 dark:text-slate-400">Questions solved today</span>
               </div>
               <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div className="h-full bg-emerald-500 rounded-full transition-all duration-500" style={{ width: `${goalPercentage}%` }}></div>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400">
                 {remaining > 0 
                   ? `Complete ${remaining} more practice questions to hit your daily percentile multiplier goal!`
                   : "Fantastic job! You've achieved your daily goal target!"
@@ -422,21 +435,26 @@ export default function Dashboard() {
 
           {/* Weak Topics Widget */}
           <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
-            <h2 className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Weak Areas</h2>
+            <div className="space-y-1">
+              <h2 className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Weak Areas</h2>
+              <p className="text-[10px] text-slate-650 dark:text-slate-400 leading-normal">
+                Topic-level weak spots below 70% accuracy (minimum 5 attempts), excluding section averages.
+              </p>
+            </div>
             <div className="space-y-3">
-              <div className="flex items-start gap-3 p-3 rounded-xl bg-red-50/50 dark:bg-red-950/10 border border-red-500/10 text-red-700 dark:text-red-400">
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-red-50/50 dark:bg-red-950/10 border border-red-500/10 text-red-750 dark:text-red-400">
                 <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <h4 className="text-xs font-bold">Geometry Circles</h4>
-                  <p className="text-[10px] text-red-600 dark:text-red-400">Accuracy is 64%. Needs Revision.</p>
+                  <p className="text-[10px] text-red-700 dark:text-red-400">Accuracy is 64%. Needs Revision.</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-xl bg-amber-50/50 dark:bg-amber-950/10 border border-amber-500/10 text-amber-700 dark:text-amber-400">
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-amber-50/50 dark:bg-amber-950/10 border border-amber-500/10 text-amber-800 dark:text-amber-400">
                 <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <h4 className="text-xs font-bold">Time-Speed-Distance</h4>
-                  <p className="text-[10px] text-amber-600 dark:text-amber-400">Formula sheet read, but topic test accuracy is 50%.</p>
+                  <p className="text-[10px] text-amber-850 dark:text-amber-400">Formula sheet read, but topic test accuracy is 50%.</p>
                 </div>
               </div>
             </div>
@@ -449,7 +467,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
                 <div className="space-y-0.5">
                   <h4 className="text-xs font-bold">Percentages</h4>
-                  <span className="text-[10px] text-slate-400">Last practiced: 3 days ago</span>
+                  <span className="text-[10px] text-slate-600 dark:text-slate-400">Last practiced: 3 days ago</span>
                 </div>
                 <Link
                   href="/quant"
@@ -462,7 +480,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
                 <div className="space-y-0.5">
                   <h4 className="text-xs font-bold">Arrangement sets</h4>
-                  <span className="text-[10px] text-slate-400">Last practiced: Yesterday</span>
+                  <span className="text-[10px] text-slate-600 dark:text-slate-400">Last practiced: Yesterday</span>
                 </div>
                 <Link
                   href="/lrdi"
