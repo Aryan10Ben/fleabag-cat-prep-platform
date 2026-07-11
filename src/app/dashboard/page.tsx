@@ -369,7 +369,9 @@ export default function Dashboard() {
                 {recentAttempts.map((attempt: any) => (
                   <div key={attempt.id} className="py-3.5 flex items-center justify-between first:pt-0 last:pb-0">
                     <div className="space-y-1">
-                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{attempt.test.name}</p>
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                        {attempt.test?.name || attempt.catPyqPaper?.title || "Practice Attempt"}
+                      </p>
                       <div className="flex items-center gap-3 text-xs text-slate-400">
                         <span>Score: <strong className="text-slate-700 dark:text-slate-350">{attempt.score}</strong></span>
                         <span>•</span>

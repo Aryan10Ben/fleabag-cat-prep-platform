@@ -186,13 +186,22 @@ export default function PerformancePage() {
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {recentAttempts.map((attempt: any) => (
                   <tr key={attempt.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors">
-                    <td className="py-3 pr-4 font-bold">{attempt.test.name}</td>
+                    <td className="py-3 pr-4 font-bold">
+                      {attempt.test?.name || attempt.catPyqPaper?.title || "Practice Attempt"}
+                    </td>
                     <td className="py-3 px-4">{attempt.score} pts</td>
                     <td className="py-3 px-4 text-blue-600 dark:text-blue-400 font-bold">{attempt.percentile}%ile</td>
                     <td className="py-3 px-4 font-semibold text-emerald-600">{attempt.accuracy}%</td>
                     <td className="py-3 px-4">{Math.round(attempt.timeSpent / 60)} mins</td>
                     <td className="py-3 pl-4">
-                      <Link href={`/mock-tests/result/${attempt.id}`} className="text-blue-600 dark:text-blue-400 hover:underline font-bold">
+                      <Link 
+                        href={
+                          attempt.catPyqPaperId 
+                            ? `/pyq/${attempt.catPyqPaperId}/analysis/${attempt.id}` 
+                            : `/mock-tests/result/${attempt.id}`
+                        } 
+                        className="text-blue-600 dark:text-blue-400 hover:underline font-bold"
+                      >
                         Review Solutions &rarr;
                       </Link>
                     </td>

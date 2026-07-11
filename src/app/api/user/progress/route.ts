@@ -123,7 +123,10 @@ export async function GET(req: NextRequest) {
     // Fetch recent attempts
     const recentAttempts = await prisma.attempt.findMany({
       where: { userId },
-      include: { test: true },
+      include: { 
+        test: true,
+        catPyqPaper: true,
+      },
       orderBy: { completedAt: "desc" },
       take: 5,
     });
