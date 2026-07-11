@@ -11,6 +11,6 @@ test.describe("Previous Year Papers", () => {
 
   test("PYQ catalog loads with papers", async ({ page }) => {
     await page.goto("/pyq");
-    await expect(page.getByText(/CAT|PYQ|Previous/i).first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Previous Year CAT Papers" })).toBeVisible();
   });
 });

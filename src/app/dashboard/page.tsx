@@ -195,7 +195,7 @@ export default function Dashboard() {
             Welcome back, {session?.user?.name || "Aspirant"}!
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 max-w-lg">
-            Consistency is the secret ingredient. You solved 8 questions today. Keep it up!
+            Consistency is the secret ingredient. You solved {solvedToday} questions today. Keep it up!
           </p>
         </div>
         

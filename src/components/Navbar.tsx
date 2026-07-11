@@ -2,7 +2,23 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { LogOut, AlertTriangle, Calendar, CheckSquare, Sun, Moon } from "lucide-react";
+import {
+  LogOut,
+  AlertTriangle,
+  Calendar,
+  CheckSquare,
+  Sun,
+  Moon,
+  LayoutDashboard,
+  Calculator,
+  BookOpen,
+  GitMerge,
+  History,
+  FileSpreadsheet,
+  Trophy,
+  User,
+  Settings
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import DailyGoalModal from "@/components/DailyGoalModal";
@@ -15,6 +31,29 @@ interface NavbarProps {
 export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
+
+  const navItems = [
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Quant", href: "/quant", icon: Calculator },
+    { name: "VARC", href: "/varc", icon: BookOpen },
+    { name: "LRDI", href: "/lrdi", icon: GitMerge },
+    { name: "PYQ", href: "/pyq", icon: History },
+    { name: "Mock Tests", href: "/mock-tests", icon: FileSpreadsheet },
+    { name: "Performance", href: "/performance", icon: Trophy },
+    { name: "Profile", href: "/profile", icon: User },
+  ];
+
+  if (session?.user && (session.user as any).role === "ADMIN") {
+    navItems.push({ name: "Admin Panel", href: "/admin", icon: Settings });
+  }
+
+  const isActive = (href: string) => {
+    if (href === "/dashboard") {
+      return pathname === "/dashboard";
+    }
+    return pathname.startsWith(href);
+  };
+
   const [solvedToday, setSolvedToday] = useState(8);
   const [dailyGoal, setDailyGoal] = useState(15);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -129,7 +168,7 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
         {/* Toggle Sidebar Button (3-dash hamburger) */}
         <button
           onClick={onToggleSidebar}
-          className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-xs hover:text-slate-900 dark:hover:text-slate-100 transition-all flex items-center justify-center focus:outline-none cursor-pointer"
+          className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-xs hover:text-slate-900 dark:hover:text-slate-100 transition-all flex items-center justify-center focus:outline-none cursor-pointer lg:hidden"
           aria-label="Toggle Sidebar"
         >
           {/* Animated Hamburger Icon */}
@@ -140,11 +179,11 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
           </div>
         </button>
 
-        <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+        <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-350 flex items-center gap-2 lg:hidden">
           <Calendar className="h-4 w-4 text-blue-500 hidden sm:inline" />
           <span>{currentDate || "June 9, 2026"}</span>
         </span>
-        <div className="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-400 dark:text-slate-500">
+        <div className="hidden md:flex lg:hidden items-center gap-4 text-xs font-semibold text-slate-400 dark:text-slate-500">
           <button 
             onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-1.5 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900 px-2 py-0.5 rounded-lg transition-all border border-transparent hover:border-slate-150 dark:hover:border-slate-800"
@@ -155,12 +194,51 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
               <strong className="text-slate-900 dark:text-white font-extrabold">{solvedToday} / {dailyGoal}</strong> solved today
             </span>
           </button>
-
         </div>
+
+        {/* Horizontal Navigation for Desktop */}
+        <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                  active
+                    ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400"
+                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100"
+                }`}
+              >
+                <Icon className={`h-4 w-4 ${active ? "text-blue-600 dark:text-blue-400" : "text-slate-400"}`} />
+                <span>{item.name}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
 
       {/* User Controls */}
       <div className="flex items-center gap-4">
+        {/* Desktop Date and solved targets */}
+        <div className="hidden lg:flex items-center gap-4 text-xs font-semibold text-slate-400 dark:text-slate-500 mr-2">
+          <span className="text-xs font-semibold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-blue-500" />
+            <span>{currentDate}</span>
+          </span>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-1.5 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900 px-2 py-0.5 rounded-lg transition-all border border-transparent hover:border-slate-150 dark:hover:border-slate-800"
+            title="Click to adjust daily targets"
+          >
+            <CheckSquare className="h-4 w-4 text-emerald-500" />
+            <span className="text-slate-700 dark:text-slate-350 font-semibold">
+              <strong className="text-slate-900 dark:text-white font-extrabold">{solvedToday} / {dailyGoal}</strong> solved today
+            </span>
+          </button>
+        </div>
+
         {/* Dark Mode Toggle */}
         <button
           onClick={toggleDarkMode}

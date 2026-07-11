@@ -78,7 +78,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <aside
-      className={`fixed md:sticky top-0 bottom-0 left-0 h-screen bg-white dark:bg-slate-950 border-r border-slate-100 dark:border-slate-800 flex flex-col justify-between z-50 md:z-30 transition-all duration-300 ease-in-out
+      className={`fixed md:sticky lg:hidden top-0 bottom-0 left-0 h-screen bg-white dark:bg-slate-950 border-r border-slate-100 dark:border-slate-800 flex flex-col justify-between z-50 md:z-30 transition-all duration-300 ease-in-out
         ${isOpen
           ? "translate-x-0 w-64 opacity-100 animate-fadeIn"
           : "-translate-x-full md:-translate-x-full md:w-0 md:opacity-0 md:pointer-events-none border-r-transparent overflow-hidden"

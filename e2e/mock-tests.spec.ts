@@ -11,6 +11,6 @@ test.describe("Mock Tests", () => {
 
   test("mock tests catalog loads", async ({ page }) => {
     await page.goto("/mock-tests");
-    await expect(page.getByText(/mock/i).first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Mock Tests & PYQ Sectionals" })).toBeVisible();
   });
 });
