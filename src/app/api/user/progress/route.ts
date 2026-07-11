@@ -135,18 +135,33 @@ export async function GET(req: NextRequest) {
       const varcGoal = lastProgress?.varcGoal ?? 6;
       const lrdiGoal = lastProgress?.lrdiGoal ?? 4;
 
-      dailyGoalProgress = await prisma.dailyGoalProgress.create({
-        data: {
-          userId,
-          date: dateStr,
-          quantGoal,
-          varcGoal,
-          lrdiGoal,
-          quantSolved: 0,
-          varcSolved: 0,
-          lrdiSolved: 0,
-        },
-      });
+      try {
+        dailyGoalProgress = await prisma.dailyGoalProgress.create({
+          data: {
+            userId,
+            date: dateStr,
+            quantGoal,
+            varcGoal,
+            lrdiGoal,
+            quantSolved: 0,
+            varcSolved: 0,
+            lrdiSolved: 0,
+          },
+        });
+      } catch (err: any) {
+        if (err.code === "P2002") {
+          dailyGoalProgress = await prisma.dailyGoalProgress.findUnique({
+            where: {
+              userId_date: {
+                userId,
+                date: dateStr,
+              },
+            },
+          });
+        } else {
+          throw err;
+        }
+      }
     }
 
     return NextResponse.json({

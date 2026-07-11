@@ -90,8 +90,9 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Email Address</label>
+              <label htmlFor="email" className="text-xs font-bold text-slate-400 uppercase tracking-wider">Email Address</label>
               <input
+                id="email"
                 type="email"
                 required
                 value={email}
@@ -103,10 +104,11 @@ export default function LoginPage() {
 
             <div className="space-y-1">
               <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Password</label>
+                <label htmlFor="password" className="text-xs font-bold text-slate-400 uppercase tracking-wider">Password</label>
                 <a href="#" className="text-xs font-semibold text-blue-400 hover:underline">Forgot?</a>
               </div>
               <input
+                id="password"
                 type="password"
                 required
                 value={password}

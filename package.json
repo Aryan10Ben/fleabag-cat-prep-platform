@@ -16,11 +16,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:generate": "prisma generate",
+    "db:generate": "node scripts/prepare-prisma.js && prisma generate",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:up": "docker compose up -d",
-    "postinstall": "prisma generate",
+    "postinstall": "node scripts/prepare-prisma.js && prisma generate",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   },

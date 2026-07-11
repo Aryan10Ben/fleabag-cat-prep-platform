@@ -1,7 +1,7 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
-export default withAuth(
+const authProxy = withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
     const isApiAdmin = req.nextUrl.pathname.startsWith("/api/admin");
@@ -21,6 +21,9 @@ export default withAuth(
     },
   }
 );
+
+export default authProxy;
+export { authProxy as proxy };
 
 export const config = {
   matcher: ["/admin", "/admin/:path*", "/api/admin", "/api/admin/:path*"],
