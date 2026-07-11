@@ -37,6 +37,24 @@ export async function GET(req: NextRequest) {
     // If no progress records, seed them on-the-fly for this user
     if (progressRows.length === 0) {
       const allSubtopics = await prisma.subtopic.findMany();
+      
+      if (allSubtopics.length === 0) {
+        // Return empty progress structure to prevent infinite recursion if database is not seeded
+        return NextResponse.json({
+          userName: user?.name,
+          streak: user?.streak || 0,
+          overallProgress: 0,
+          quantProgress: 0,
+          varcProgress: 0,
+          lrdiProgress: 0,
+          topicProgress: {},
+          recentAttempts: [],
+          achievements: [],
+          rawProgress: [],
+          dailyGoalProgress: null,
+        });
+      }
+
       await prisma.userProgress.createMany({
         data: allSubtopics.map((sub) => ({
           userId,
