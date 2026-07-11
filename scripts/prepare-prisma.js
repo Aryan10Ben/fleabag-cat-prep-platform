@@ -11,7 +11,14 @@ if (!fs.existsSync(schemaPath)) {
 let schemaContent = fs.readFileSync(schemaPath, "utf8");
 
 const databaseUrl = process.env.DATABASE_URL || "";
-let provider = "sqlite"; // Default fallback
+
+// If DATABASE_URL is not set, do not modify the schema provider!
+if (!databaseUrl) {
+  console.log("[prepare-prisma] No DATABASE_URL environment variable found. Keeping existing schema provider.");
+  process.exit(0);
+}
+
+let provider = "sqlite";
 
 if (
   databaseUrl.startsWith("postgresql:") ||
@@ -21,8 +28,6 @@ if (
 }
 
 // Regex to capture: datasource db { provider = "..." }
-// Group 1 will match the start of the block up to the provider quote
-// Group 2 will match the closing quote and trailing schema content
 const regex = /(datasource db\s*\{[^}]*provider\s*=\s*")[^"]*(")/;
 
 if (regex.test(schemaContent)) {
