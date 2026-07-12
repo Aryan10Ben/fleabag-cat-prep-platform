@@ -82,7 +82,7 @@ A train leaves station A at 50km/h...,MCQ,MEDIUM,Standard speed relative formula
         console.error(err);
       }
     };
-    if (session?.user && (session.user as any).role === "ADMIN") {
+    if (session?.user && (session.user as { role?: string }).role === "ADMIN") {
       fetchSubtopics();
     }
   }, [session]);
@@ -153,7 +153,6 @@ A train leaves station A at 50km/h...,MCQ,MEDIUM,Standard speed relative formula
     try {
       // Simple CSV row parser for MVP bulk uploads
       const lines = csvContent.split("\n");
-      const headers = lines[0].split(",");
       const questionsData = [];
 
       for (let i = 1; i < lines.length; i++) {
@@ -261,7 +260,7 @@ A train leaves station A at 50km/h...,MCQ,MEDIUM,Standard speed relative formula
       </div>
 
       {/* Tabs selectors */}
-      <div className="flex border-b dark:border-slate-850 gap-6 text-sm font-semibold">
+      <div className="flex border-b dark:border-slate-800 gap-6 text-sm font-semibold">
         <button
           onClick={() => {
             setActiveTab("manual");
@@ -317,7 +316,7 @@ A train leaves station A at 50km/h...,MCQ,MEDIUM,Standard speed relative formula
         <div className={`p-4 rounded-xl border text-xs font-semibold flex items-center gap-2 animate-fadeIn ${
           notice.type === "success"
             ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-            : "bg-red-50 dark:bg-red-950/20 border-red-500/20 text-red-650 dark:text-red-400"
+            : "bg-red-50 dark:bg-red-950/20 border-red-500/20 text-red-600 dark:text-red-400"
         }`}>
           {notice.type === "success" ? <CheckCircle className="h-4.5 w-4.5" /> : <ShieldAlert className="h-4.5 w-4.5" />}
           <span>{notice.text}</span>
@@ -504,7 +503,7 @@ A train leaves station A at 50km/h...,MCQ,MEDIUM,Standard speed relative formula
               type="button"
               onClick={handleAIGenerate}
               disabled={loading}
-              className="px-6 py-3 bg-slate-900 hover:bg-slate-800 dark:bg-blue-650 dark:hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/10 flex items-center gap-1.5"
+              className="px-6 py-3 bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/10 flex items-center gap-1.5"
             >
               {loading ? (
                 <>
@@ -542,7 +541,7 @@ A train leaves station A at 50km/h...,MCQ,MEDIUM,Standard speed relative formula
                       <div className="grid grid-cols-2 gap-3 text-xs">
                         {q.options.map((opt) => (
                           <div key={opt.id} className={`p-2 rounded border text-left ${
-                            opt.isCorrect ? "border-emerald-500 bg-emerald-500/5 text-emerald-600 font-bold" : "border-slate-100 dark:border-slate-850 text-slate-500"
+                            opt.isCorrect ? "border-emerald-500 bg-emerald-500/5 text-emerald-600 font-bold" : "border-slate-100 dark:border-slate-800 text-slate-500"
                           }`}>
                             {opt.content}
                           </div>

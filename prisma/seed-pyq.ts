@@ -1,5 +1,24 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { SECTION_META } from "../src/lib/pyq/constants";
+
+interface SeedOption {
+  id: string;
+  content: string;
+  isCorrect: boolean;
+  questionId: string;
+}
+
+interface SeedQuestionData {
+  id: string;
+  content: string;
+  type: string;
+  difficulty: string;
+  solution: string;
+  options: SeedOption[];
+  rcPassageId?: string | null;
+  lrdiSetId?: string | null;
+  tableJson?: string | null;
+}
 
 const YEARS = [2025, 2024, 2023, 2022, 2021, 2020];
 const SLOTS = [1, 2, 3];
@@ -13,7 +32,7 @@ function makeMcqOptions(questionId: string, correct: string, distractors: string
   }));
 }
 
-function varcQuestion(year: number, slot: number, order: number, passageId: string | null) {
+function varcQuestion(year: number, slot: number, order: number, passageId: string | null): SeedQuestionData {
   const id = `pyq-q-${year}-s${slot}-VARC-${order}`;
   const isRc = order <= 18;
   const content = isRc
@@ -34,7 +53,7 @@ function varcQuestion(year: number, slot: number, order: number, passageId: stri
   };
 }
 
-function dilrQuestion(year: number, slot: number, order: number, setId: string) {
+function dilrQuestion(year: number, slot: number, order: number, setId: string): SeedQuestionData {
   const id = `pyq-q-${year}-s${slot}-DILR-${order}`;
   const isTita = order % 5 === 0;
   const content = `Based on the data set conditions, determine the value for constraint ${order}. ${
@@ -65,7 +84,7 @@ function dilrQuestion(year: number, slot: number, order: number, setId: string) 
   };
 }
 
-function qaQuestion(year: number, slot: number, order: number) {
+function qaQuestion(year: number, slot: number, order: number): SeedQuestionData {
   const id = `pyq-q-${year}-s${slot}-QA-${order}`;
   const isTita = order % 4 === 0;
   const a = order + slot;
@@ -111,11 +130,11 @@ export async function seedPyqPapers(prisma: PrismaClient) {
   await prisma.catPyqPaper.deleteMany({});
 
   const pyqQuestionIds: string[] = [];
-  const papersToCreate: any[] = [];
-  const sectionsToCreate: any[] = [];
-  const questionsToCreate: any[] = [];
-  const optionsToCreate: any[] = [];
-  const pyqLinksToCreate: any[] = [];
+  const papersToCreate: Prisma.CatPyqPaperCreateManyInput[] = [];
+  const sectionsToCreate: Prisma.CatPyqSectionCreateManyInput[] = [];
+  const questionsToCreate: Prisma.QuestionCreateManyInput[] = [];
+  const optionsToCreate: Prisma.OptionCreateManyInput[] = [];
+  const pyqLinksToCreate: Prisma.CatPyqQuestionCreateManyInput[] = [];
 
   for (const year of YEARS) {
     for (const slot of SLOTS) {
@@ -162,7 +181,7 @@ export async function seedPyqPapers(prisma: PrismaClient) {
         });
 
         for (let order = 1; order <= meta.questionCount; order++) {
-          let qData;
+          let qData: SeedQuestionData;
           if (section === "VARC") qData = varcQuestion(year, slot, order, passageId);
           else if (section === "DILR") qData = dilrQuestion(year, slot, order, lrdiSetId);
           else qData = qaQuestion(year, slot, order);
@@ -175,9 +194,9 @@ export async function seedPyqPapers(prisma: PrismaClient) {
             type: qData.type,
             difficulty: qData.difficulty,
             solution: qData.solution,
-            rcPassageId: (qData as any).rcPassageId || null,
-            lrdiSetId: (qData as any).lrdiSetId || null,
-            tableJson: (qData as any).tableJson || null,
+            rcPassageId: qData.rcPassageId || null,
+            lrdiSetId: qData.lrdiSetId || null,
+            tableJson: qData.tableJson || null,
           });
 
           for (const opt of qData.options) {
