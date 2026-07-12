@@ -57,7 +57,7 @@ export default function PyqPapersPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
       </div>
     );
   }
@@ -105,10 +105,10 @@ export default function PyqPapersPage() {
         {byYear.map(([year, slots]) => (
           <div key={year} className="space-y-4">
             <h2 className="text-xl font-black flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-blue-600" />
+              <Calendar className="h-5 w-5 text-indigo-600" />
               CAT {year}
             </h2>
-            <div className="grid md:grid-cols-3 gap-4 pl-4 border-l-2 border-blue-200 dark:border-blue-900">
+            <div className="grid md:grid-cols-3 gap-4 pl-4 border-l-2 border-indigo-200 dark:border-blue-900">
               {slots.sort((a, b) => a.slot - b.slot).map((paper) => (
                 <div
                   key={paper.id}
@@ -120,11 +120,11 @@ export default function PyqPapersPage() {
                       <p className="text-xs text-slate-400 mt-0.5">{paper.totalQuestions} Q · {paper.totalDuration} min</p>
                     </div>
                     {paper.completed ? (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 flex items-center gap-1">
+                      <span className="text-xs tracking-wide font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 flex items-center gap-1">
                         <CheckCircle className="h-3 w-3" /> Done
                       </span>
                     ) : (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-500">New</span>
+                      <span className="text-xs tracking-wide font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-500">New</span>
                     )}
                   </div>
                   {paper.lastAttempt && (
@@ -135,7 +135,7 @@ export default function PyqPapersPage() {
                   <div className="flex gap-2">
                     <Link
                       href={`/pyq/${paper.id}/exam`}
-                      className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1"
+                      className="flex-1 py-2.5 bg-indigo-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1"
                     >
                       <Play className="h-3.5 w-3.5 fill-white" />
                       {paper.completed ? "Retake" : "Start Mock"}

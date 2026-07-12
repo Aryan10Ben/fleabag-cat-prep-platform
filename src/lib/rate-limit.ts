@@ -17,7 +17,9 @@ export type RateLimitResult =
 
 /**
  * Simple in-memory rate limiter. Suitable for single-instance dev/small deploys.
- * For multi-instance production, use Redis/Upstash.
+ * WARNING / TODO: This is NOT safe for multi-instance production (e.g. serverless Vercel).
+ * For production, configure Upstash Redis using the HTTP client (@upstash/redis)
+ * and update this function to use redis.incr/expire or @upstash/ratelimit.
  */
 export function checkRateLimit(
   key: string,

@@ -80,7 +80,7 @@ export default function MockTestsSelectionPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
         <p className="text-sm text-slate-400">Loading mock tests...</p>
       </div>
     );
@@ -109,7 +109,7 @@ export default function MockTestsSelectionPage() {
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
               activeTab === tab.key
-                ? "bg-blue-600 text-white shadow-md"
+                ? "bg-indigo-600 text-white shadow-md"
                 : "bg-white dark:bg-slate-950 border text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -123,14 +123,14 @@ export default function MockTestsSelectionPage() {
           <button
             key={cat}
             onClick={() => setCategoryFilter(cat)}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase ${
+            className={`px-3 py-1.5 rounded-lg text-xs tracking-wide font-bold uppercase ${
               categoryFilter === cat ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-500"
             }`}
           >
             {cat === "ALL" ? "All Sections" : cat}
           </button>
         ))}
-        <span className="text-[10px] text-slate-400 self-center ml-2">{tabs.find((t) => t.key === activeTab)?.desc}</span>
+        <span className="text-xs tracking-wide text-slate-400 self-center ml-2">{tabs.find((t) => t.key === activeTab)?.desc}</span>
       </div>
 
       {activeTab === "PYQ" && categoryFilter === "ALL" ? (
@@ -198,14 +198,14 @@ function TestCard({
     amber: "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400",
     rose: "bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400",
     indigo: "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400",
-    blue: "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400",
+    blue: "bg-indigo-50 text-blue-700 dark:bg-blue-950/30 dark:text-indigo-400",
   };
 
   return (
     <div className="bg-white dark:bg-slate-950 rounded-2xl border p-5 flex flex-col justify-between min-h-[200px] hover:border-blue-300 transition-all group">
       <div className="space-y-3">
         <div className="flex justify-between items-start gap-2">
-          <span className={`text-[10px] font-black px-2 py-0.5 rounded uppercase ${colors[badgeColor]}`}>
+          <span className={`text-xs tracking-wide font-black px-2 py-0.5 rounded uppercase ${colors[badgeColor]}`}>
             {badge}
           </span>
           <div className="flex items-center gap-1 text-xs text-slate-400 font-semibold shrink-0">
@@ -213,18 +213,18 @@ function TestCard({
             {mock.duration}m
           </div>
         </div>
-        <h3 className="text-sm font-bold group-hover:text-blue-600 transition-colors leading-snug">{mock.name}</h3>
+        <h3 className="text-sm font-bold group-hover:text-indigo-600 transition-colors leading-snug">{mock.name}</h3>
         <p className="text-xs text-slate-400">
           {mock.questionCount} questions · {mock.category} · CAT marking scheme
         </p>
       </div>
       <div className="pt-4 border-t mt-4 flex justify-between items-center">
-        <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
+        <span className="text-xs tracking-wide font-bold text-slate-400 flex items-center gap-1">
           <Award className="h-3.5 w-3.5" /> Analysis included
         </span>
         <Link
           href={`/mock-tests/${mock.id}`}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1 active:scale-[0.98]"
+          className="px-4 py-2 bg-indigo-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1 active:scale-[0.98]"
         >
           <Play className="h-3 w-3 fill-white" /> Start
         </Link>

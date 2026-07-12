@@ -24,6 +24,6 @@ export async function GET(
     return NextResponse.json({ test });
   } catch (error: unknown) {
     console.error("GET test details error:", error);
-    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }

@@ -16,7 +16,7 @@ export default function LandingPage() {
           
           {/* Logo Badge */}
           <div className="flex justify-center mb-2">
-            <Cat className="h-16 w-16 text-blue-400" />
+            <Cat className="h-16 w-16 text-indigo-400" />
           </div>
 
           {/* Heading */}

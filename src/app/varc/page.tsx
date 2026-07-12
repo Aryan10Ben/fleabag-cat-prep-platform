@@ -83,7 +83,7 @@ export default function VarcPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent"></div>
         <p className="text-sm text-slate-400">Loading VARC modules...</p>
       </div>
     );
@@ -107,7 +107,7 @@ export default function VarcPage() {
             <span className="text-sm font-bold text-slate-800 dark:text-slate-200">
               {varcProgress === 100 ? "Ready for CAT" : "Active Practice"}
             </span>
-            <span className="text-[10px] text-indigo-500 font-bold block mt-1">✓ Includes RC & VA Modules</span>
+            <span className="text-xs tracking-wide text-indigo-500 font-bold block mt-1">✓ Includes RC & VA Modules</span>
           </div>
         </div>
       </div>
@@ -151,12 +151,12 @@ export default function VarcPage() {
                         <div className="h-1.5 w-16 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                           <div className="h-full bg-indigo-500" style={{ width: `${pct}%` }}></div>
                         </div>
-                        <span className="text-[10px] text-slate-400 font-bold">{pct}% Completed</span>
+                        <span className="text-xs tracking-wide text-slate-400 font-bold">{pct}% Completed</span>
                       </div>
                     </div>
 
                     {/* Progress checklist ticks */}
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-650 dark:text-slate-400">
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
                       <button onClick={() => toggleCheck(sub.id, "formulaSheetRead")} className="flex items-center gap-1.5 hover:text-indigo-600 transition-colors">
                         {progress.formulaSheetRead ? <CheckSquare className="h-4 w-4 text-emerald-500 fill-emerald-500/10" /> : <Square className="h-4 w-4 text-slate-300" />}
                         <span>Concept Read</span>

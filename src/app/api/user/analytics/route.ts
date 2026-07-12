@@ -34,7 +34,7 @@ export async function GET() {
       mocksAttempted: (analytics?.testsTaken ?? 0) + pyqAttempts,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("GET user analytics error:", error);
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }

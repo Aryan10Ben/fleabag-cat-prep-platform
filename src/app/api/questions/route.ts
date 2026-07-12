@@ -19,6 +19,11 @@ export async function GET(req: NextRequest) {
               options: true,
               rcPassage: true,
               lrdiSet: true,
+              subtopic: {
+                include: {
+                  topic: true,
+                }
+              }
             },
           },
         },
@@ -59,6 +64,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ questions });
   } catch (error: unknown) {
     console.error("GET questions error:", error);
-    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }

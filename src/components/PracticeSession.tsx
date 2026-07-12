@@ -38,20 +38,21 @@ export default function PracticeSession({
   const [loading, setLoading] = useState(true);
   const [progressUpdated, setProgressUpdated] = useState(false);
   const [difficulty, setDifficulty] = useState<Difficulty>("ALL");
+  const [answeredQuestionIds, setAnsweredQuestionIds] = useState<Set<string>>(new Set());
 
   const accentBtn =
     accent === "indigo"
       ? "bg-indigo-600 hover:bg-indigo-700"
       : accent === "emerald"
       ? "bg-emerald-600 hover:bg-emerald-700"
-      : "bg-blue-600 hover:bg-blue-700";
+      : "bg-indigo-600 hover:bg-blue-700";
 
   const accentText =
     accent === "indigo"
       ? "text-indigo-600 dark:text-indigo-400"
       : accent === "emerald"
       ? "text-emerald-600 dark:text-emerald-400"
-      : "text-blue-600 dark:text-blue-400";
+      : "text-indigo-600 dark:text-indigo-400";
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -70,6 +71,7 @@ export default function PracticeSession({
         if (res.ok) {
           const data = await res.json();
           setQuestions(data.questions);
+          setAnsweredQuestionIds(new Set());
         }
       } catch (err) {
         console.error("Failed to load practice questions:", err);
@@ -83,6 +85,11 @@ export default function PracticeSession({
   const handleOptionSelect = (optionId: string) => {
     if (showSolution) return;
     setSelectedOptionId(optionId);
+    setAnsweredQuestionIds((prev) => {
+      const next = new Set(prev);
+      next.add(currentQuestion.id);
+      return next;
+    });
   };
 
   const handleNext = () => {
@@ -105,6 +112,7 @@ export default function PracticeSession({
 
   const markCompleted = async () => {
     try {
+      const count = answeredQuestionIds.size;
       const res = await fetch("/api/user/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -112,6 +120,7 @@ export default function PracticeSession({
           subtopicId,
           field: "practiceQuestionsCompleted",
           value: true,
+          questionsAnswered: count > 0 ? count : 1,
         }),
       });
       if (res.ok) {
@@ -133,7 +142,7 @@ export default function PracticeSession({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
         <p className="text-sm text-slate-400">Loading practice questions...</p>
       </div>
     );
@@ -192,34 +201,34 @@ export default function PracticeSession({
       <div className="bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 md:p-8 space-y-6 relative overflow-hidden">
         <div className="absolute right-0 top-0 p-4 flex gap-2">
           <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${
+            className={`text-xs tracking-wide font-bold px-2 py-0.5 rounded uppercase tracking-wider ${
               currentQuestion.difficulty === "EASY"
                 ? "bg-emerald-50 text-emerald-600"
                 : currentQuestion.difficulty === "MEDIUM"
-                ? "bg-blue-50 text-blue-600"
+                ? "bg-indigo-50 text-indigo-600"
                 : "bg-red-50 text-red-600"
             }`}
           >
             {currentQuestion.difficulty}
           </span>
           {currentQuestion.type === "TITA" && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider bg-amber-50 text-amber-600">
+            <span className="text-xs tracking-wide font-bold px-2 py-0.5 rounded uppercase tracking-wider bg-amber-50 text-amber-600">
               TITA
             </span>
           )}
         </div>
 
         {currentQuestion.rcPassage && (
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Reading Passage</p>
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
+            <p className="text-xs tracking-wide font-bold uppercase tracking-wider text-slate-400">Reading Passage</p>
             <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">{currentQuestion.rcPassage.title}</h3>
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{currentQuestion.rcPassage.content}</p>
           </div>
         )}
 
         {currentQuestion.lrdiSet && (
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">LRDI Set</p>
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
+            <p className="text-xs tracking-wide font-bold uppercase tracking-wider text-slate-400">LRDI Set</p>
             <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">{currentQuestion.lrdiSet.title}</h3>
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{currentQuestion.lrdiSet.description}</p>
           </div>
@@ -227,7 +236,7 @@ export default function PracticeSession({
 
         <div className="space-y-4">
           <p className={`text-xs font-extrabold uppercase tracking-widest ${accentText}`}>Practice Question</p>
-          <h2 className="text-base font-semibold leading-relaxed text-slate-850 dark:text-slate-200">
+          <h2 className="text-base font-semibold leading-relaxed text-slate-800 dark:text-slate-200">
             {currentQuestion.content}
           </h2>
         </div>
@@ -238,8 +247,8 @@ export default function PracticeSession({
               {currentQuestion.options.map((opt: any) => {
                 const isSelected = selectedOptionId === opt.id;
                 const isCorrect = opt.isCorrect;
-                let btnStyle = "border-slate-200 dark:border-slate-850 hover:bg-slate-50 dark:hover:bg-slate-900";
-                if (isSelected) btnStyle = "border-blue-600 bg-blue-50/10 text-blue-600";
+                let btnStyle = "border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900";
+                if (isSelected) btnStyle = "border-indigo-600 bg-indigo-50/10 text-indigo-600";
                 if (showSolution) {
                   if (isCorrect) btnStyle = "border-emerald-500 bg-emerald-500/10 text-emerald-600 font-bold";
                   else if (isSelected) btnStyle = "border-red-500 bg-red-500/10 text-red-600";
@@ -248,11 +257,11 @@ export default function PracticeSession({
                   <button
                     key={opt.id}
                     onClick={() => handleOptionSelect(opt.id)}
-                    className={`p-4 rounded-xl border text-left text-sm transition-all flex items-center justify-between ${btnStyle}`}
+                    className={`p-4 rounded-2xl border text-left text-sm transition-all flex items-center justify-between ${btnStyle}`}
                   >
                     <span>{opt.content}</span>
                     {showSolution && isCorrect && (
-                      <span className="text-[10px] font-bold text-emerald-600 uppercase">Correct</span>
+                      <span className="text-xs tracking-wide font-bold text-emerald-600 uppercase">Correct</span>
                     )}
                   </button>
                 );
@@ -265,9 +274,21 @@ export default function PracticeSession({
                 type="text"
                 disabled={showSolution}
                 value={titaAnswer}
-                onChange={(e) => setTitaAnswer(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setTitaAnswer(val);
+                  setAnsweredQuestionIds((prev) => {
+                    const next = new Set(prev);
+                    if (val.trim()) {
+                      next.add(currentQuestion.id);
+                    } else {
+                      next.delete(currentQuestion.id);
+                    }
+                    return next;
+                  });
+                }}
                 placeholder="Enter numerical answer"
-                className="w-full max-w-xs px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full max-w-xs px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900 text-sm focus:border-indigo-500 focus:outline-none"
               />
             </div>
           )}
@@ -305,12 +326,12 @@ export default function PracticeSession({
         </div>
 
         {showSolution && (
-          <div className="mt-6 p-5 rounded-2xl bg-blue-50/50 dark:bg-slate-900 border border-blue-500/10 space-y-3">
+          <div className="mt-6 p-5 rounded-2xl bg-indigo-50/50 dark:bg-slate-900 border border-indigo-500/10 space-y-3">
             <div className={`flex items-center gap-1.5 font-bold text-xs ${accentText}`}>
               <Sparkles className="h-4 w-4" />
               <span>Detailed Solution — Easiest Approach</span>
             </div>
-            <p className="text-xs text-slate-650 dark:text-slate-350 leading-relaxed whitespace-pre-line">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">
               {currentQuestion.solution}
             </p>
           </div>
@@ -318,7 +339,7 @@ export default function PracticeSession({
       </div>
 
       {progressUpdated && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-500/20 text-xs font-bold text-emerald-600 flex items-center gap-2 justify-center">
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-500/20 text-xs font-bold text-emerald-600 flex items-center gap-2 justify-center">
           <CheckCircle className="h-5 w-5" />
           Practice completed! Updating your checklist...
         </div>

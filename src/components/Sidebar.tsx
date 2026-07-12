@@ -27,8 +27,16 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const [overallProgress, setOverallProgress] = useState(62); // State-driven default fallback
-  const [streak, setStreak] = useState(5);
+  const [overallProgress, setOverallProgress] = useState(0);
+  const [streak, setStreak] = useState(0);
+
+  const getRank = (progress: number) => {
+    if (progress === 0) return "Aspirant";
+    if (progress < 30) return "Novice";
+    if (progress < 60) return "Challenger";
+    if (progress < 90) return "Warrior";
+    return "Master";
+  };
 
   useEffect(() => {
     // Fetch user progress periodically
@@ -89,7 +97,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex flex-col flex-1 overflow-y-auto py-6 px-4">
           {/* Brand Logo */}
           <Link href="/dashboard" onClick={onClose} className="flex justify-center mb-8 pt-2">
-            <Cat className="h-10 w-10 text-blue-500" />
+            <Cat className="h-10 w-10 text-indigo-500" />
           </Link>
 
           {/* Navigation Links */}
@@ -104,11 +112,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   onClick={onClose}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                     active
-                      ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold"
+                      ? "bg-indigo-50 dark:bg-blue-950/40 text-indigo-600 dark:text-indigo-400 font-semibold"
                       : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100"
                   }`}
                 >
-                  <Icon className={`h-5 w-5 ${active ? "text-blue-600 dark:text-blue-400" : "text-slate-400"}`} />
+                  <Icon className={`h-5 w-5 ${active ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"}`} />
                   {item.name}
                 </Link>
               );
@@ -123,9 +131,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               <Flame className="h-4 w-4 text-orange-500 fill-orange-500 animate-pulse" />
               <span>{streak} Day Streak</span>
             </div>
-            <div className="flex items-center gap-1 text-xs font-bold text-blue-600 dark:text-blue-400">
+            <div className="flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400">
               <Award className="h-4 w-4" />
-              <span>Warrior</span>
+              <span>{getRank(overallProgress)}</span>
             </div>
           </div>
 
@@ -138,7 +146,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             {/* Custom ASCII styled modern bar */}
             <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div
-                className="h-full bg-blue-600 dark:bg-blue-500 rounded-full transition-all duration-500"
+                className="h-full bg-indigo-600 dark:bg-indigo-500 rounded-full transition-all duration-500"
                 style={{ width: `${overallProgress}%` }}
               />
             </div>

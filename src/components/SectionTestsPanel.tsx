@@ -70,7 +70,7 @@ export default function SectionTestsPanel({
             return (
               <div
                 key={domain.name}
-                className="p-5 rounded-xl border border-slate-100 dark:border-slate-800 space-y-3"
+                className="p-5 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-3"
               >
                 <div className="flex items-center gap-2 text-indigo-600 font-bold text-xs">
                   <Award className="h-4 w-4" /> {domain.name}
@@ -81,7 +81,7 @@ export default function SectionTestsPanel({
                     <Link
                       key={t.id}
                       href={`/mock-tests/${t.id}`}
-                      className="flex items-center justify-between text-xs font-semibold text-blue-600 hover:underline py-1"
+                      className="flex items-center justify-between text-xs font-semibold text-indigo-600 hover:underline py-1"
                     >
                       <span className="truncate">{t.name}</span>
                       <span className="flex items-center gap-1 text-slate-400 shrink-0 ml-2">
@@ -107,7 +107,7 @@ export default function SectionTestsPanel({
               <Link
                 key={t.id}
                 href={`/mock-tests/${t.id}`}
-                className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-blue-300 transition-colors flex items-center justify-between group"
+                className="p-4 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-blue-300 transition-colors flex items-center justify-between group"
               >
                 <div>
                   <div className="flex items-center gap-2 text-rose-600 font-bold text-xs mb-1">
@@ -116,7 +116,7 @@ export default function SectionTestsPanel({
                   <h3 className="text-sm font-bold">{t.name}</h3>
                   <p className="text-xs text-slate-400 mt-0.5">22 Q · {t.duration} mins</p>
                 </div>
-                <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-blue-500" />
+                <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-indigo-500" />
               </Link>
             ))}
           </div>

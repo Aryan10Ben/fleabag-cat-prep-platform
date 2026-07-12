@@ -59,7 +59,7 @@ export async function GET(
       },
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("GET PYQ paper details error:", error);
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }

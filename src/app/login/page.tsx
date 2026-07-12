@@ -74,7 +74,7 @@ export default function LoginPage() {
         <div className="space-y-6 py-12 relative z-10 w-full">
           {/* Logo centered above Welcome back */}
           <div className="flex justify-center mb-4">
-            <Cat className="h-20 w-20 text-blue-400" />
+            <Cat className="h-20 w-20 text-indigo-400" />
           </div>
 
           <div className="space-y-1 text-center">
@@ -82,7 +82,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 text-xs font-semibold text-red-600 dark:text-red-400 flex items-center gap-2">
+            <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 text-xs font-semibold text-red-600 dark:text-red-400 flex items-center gap-2">
               <ShieldAlert className="h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -97,7 +97,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-white text-sm focus:border-blue-500 focus:outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-white text-sm focus:border-indigo-500 focus:outline-none transition-colors"
                 placeholder="user@test.com"
               />
             </div>
@@ -105,7 +105,7 @@ export default function LoginPage() {
             <div className="space-y-1">
               <div className="flex justify-between items-center">
                 <label htmlFor="password" className="text-xs font-bold text-slate-400 uppercase tracking-wider">Password</label>
-                <a href="#" className="text-xs font-semibold text-blue-400 hover:underline">Forgot?</a>
+                <a href="#" className="text-xs font-semibold text-indigo-400 hover:underline">Forgot?</a>
               </div>
               <input
                 id="password"
@@ -113,7 +113,7 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-white text-sm focus:border-blue-500 focus:outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-white text-sm focus:border-indigo-500 focus:outline-none transition-colors"
                 placeholder="••••••••"
               />
             </div>
@@ -121,7 +121,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-500/15 flex items-center justify-center gap-2 active:scale-[0.98] disabled:bg-blue-400"
+              className="w-full py-3.5 bg-indigo-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-500/15 flex items-center justify-center gap-2 active:scale-[0.98] disabled:bg-indigo-400"
             >
               {loading ? (
                 <>

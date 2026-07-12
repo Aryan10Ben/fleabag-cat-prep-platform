@@ -14,7 +14,7 @@ export function CircularProgress({
   percentage,
   size = 120,
   strokeWidth = 10,
-  colorClass = "text-blue-600 dark:text-blue-400",
+  colorClass = "text-indigo-600 dark:text-indigo-400",
   label,
 }: CircularProgressProps) {
   const [currentPercent, setCurrentPercent] = useState(0);
@@ -63,7 +63,7 @@ export function CircularProgress({
           {Math.round(currentPercent)}%
         </span>
         {label && (
-          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium tracking-wider uppercase">
+          <span className="text-xs tracking-wide text-slate-400 dark:text-slate-500 font-medium tracking-wider uppercase">
             {label}
           </span>
         )}
@@ -78,7 +78,7 @@ interface ProgressBarProps {
   colorClass?: string;
 }
 
-export function ProgressBar({ percentage, label, colorClass = "bg-blue-600 dark:bg-blue-500" }: ProgressBarProps) {
+export function ProgressBar({ percentage, label, colorClass = "bg-indigo-600 dark:bg-indigo-500" }: ProgressBarProps) {
   const [currentPercent, setCurrentPercent] = useState(0);
 
   useEffect(() => {

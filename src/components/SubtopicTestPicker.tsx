@@ -27,7 +27,7 @@ export default function SubtopicTestPicker({
       ? "bg-indigo-600 hover:bg-indigo-700"
       : accent === "emerald"
       ? "bg-emerald-600 hover:bg-emerald-700"
-      : "bg-blue-600 hover:bg-blue-700";
+      : "bg-indigo-600 hover:bg-blue-700";
 
   useEffect(() => {
     const fetchTests = async () => {
@@ -49,7 +49,7 @@ export default function SubtopicTestPicker({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
         <p className="text-sm text-slate-400">Loading topic tests...</p>
       </div>
     );

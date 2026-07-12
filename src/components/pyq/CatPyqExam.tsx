@@ -242,7 +242,7 @@ export default function CatPyqExam({ paperId }: { paperId: string }) {
   if (loading) {
     return (
       <div className="fixed inset-0 bg-slate-900 text-white flex items-center justify-center">
-        <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent animate-spin rounded-full" />
+        <div className="h-10 w-10 border-4 border-indigo-500 border-t-transparent animate-spin rounded-full" />
       </div>
     );
   }
@@ -251,7 +251,7 @@ export default function CatPyqExam({ paperId }: { paperId: string }) {
     return (
       <div className="fixed inset-0 bg-slate-900 text-white flex flex-col items-center justify-center gap-4">
         <p>Paper not found</p>
-        <button onClick={() => router.push("/pyq")} className="px-4 py-2 bg-blue-600 rounded-lg text-sm font-bold">
+        <button onClick={() => router.push("/pyq")} className="px-4 py-2 bg-indigo-600 rounded-lg text-sm font-bold">
           Back
         </button>
       </div>
@@ -263,7 +263,7 @@ export default function CatPyqExam({ paperId }: { paperId: string }) {
       <div className="fixed inset-0 z-50 bg-gradient-to-br from-slate-900 to-blue-950 text-white flex items-center justify-center p-6">
         <div className="max-w-xl w-full bg-white/5 border border-white/10 rounded-2xl p-8 space-y-6">
           <div>
-            <p className="text-xs font-bold text-blue-400 uppercase tracking-widest">Previous Year CAT Mock</p>
+            <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Previous Year CAT Mock</p>
             <h1 className="text-3xl font-black mt-2">{paper.title}</h1>
             <p className="text-slate-400 text-sm mt-1">CAT {paper.year} · Slot {paper.slot}</p>
           </div>
@@ -271,8 +271,8 @@ export default function CatPyqExam({ paperId }: { paperId: string }) {
             {CAT_SECTIONS.map((sec) => (
               <div key={sec} className="p-3 rounded-xl bg-white/5 border border-white/10">
                 <p className="font-black text-lg">{SECTION_META[sec].questionCount}</p>
-                <p className="text-[10px] text-slate-400 uppercase">{sec}</p>
-                <p className="text-[10px] text-slate-500">{SECTION_META[sec].duration} min</p>
+                <p className="text-xs tracking-wide text-slate-400 uppercase">{sec}</p>
+                <p className="text-xs tracking-wide text-slate-500">{SECTION_META[sec].duration} min</p>
               </div>
             ))}
           </div>
@@ -283,7 +283,7 @@ export default function CatPyqExam({ paperId }: { paperId: string }) {
           </ul>
           <button
             onClick={() => setStarted(true)}
-            className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold"
+            className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold"
           >
             Begin CAT {paper.year} Slot {paper.slot}
           </button>
@@ -315,7 +315,7 @@ export default function CatPyqExam({ paperId }: { paperId: string }) {
         <div className="flex items-center gap-3 min-w-0">
           <div className="min-w-0">
             <p className="text-sm font-bold truncate">{paper.title}</p>
-            <p className="text-[10px] text-slate-400">CAT {paper.year} · Slot {paper.slot} · {candidateName}</p>
+            <p className="text-xs tracking-wide text-slate-400">CAT {paper.year} · Slot {paper.slot} · {candidateName}</p>
           </div>
           <button onClick={() => setShowCalc(!showCalc)} className="px-2 py-1 bg-slate-700 rounded text-xs flex items-center gap-1">
             <Calculator className="h-3.5 w-3.5" /> Calc
@@ -455,7 +455,7 @@ export default function CatPyqExam({ paperId }: { paperId: string }) {
         <button
           disabled={currentIndex >= sectionQuestions.length - 1}
           onClick={() => setCurrentIndex((i) => i + 1)}
-          className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-bold disabled:opacity-30 flex items-center gap-1"
+          className="px-3 py-1 bg-indigo-600 text-white rounded text-xs font-bold disabled:opacity-30 flex items-center gap-1"
         >
           Next <ChevronRight className="h-4 w-4" />
         </button>
@@ -499,7 +499,7 @@ export default function CatPyqExam({ paperId }: { paperId: string }) {
                     try { setCalcInput(String(Function(`"use strict";return(${calcInput})`)())); } catch { setCalcInput("Err"); }
                   } else setCalcInput((p) => p + c);
                 }}
-                className={`py-1.5 rounded ${c === "=" ? "bg-blue-600 text-white" : "bg-slate-100"}`}
+                className={`py-1.5 rounded ${c === "=" ? "bg-indigo-600 text-white" : "bg-slate-100"}`}
               >
                 {c}
               </button>
@@ -530,7 +530,7 @@ function QuestionBody({
   return (
     <div className={`flex flex-col justify-between h-full ${large ? "" : "bg-white rounded-lg border p-4"}`}>
       <div className="space-y-3">
-        <span className="text-[10px] font-bold text-slate-400">Q{currentIndex + 1} · {currentQ.difficulty} · {currentQ.type}</span>
+        <span className="text-xs tracking-wide font-bold text-slate-400">Q{currentIndex + 1} · {currentQ.difficulty} · {currentQ.type}</span>
         <MathRenderer content={currentQ.content} className={large ? "text-base" : "text-sm"} />
         {currentQ.imageUrl && <img src={currentQ.imageUrl} alt="Question" className="max-w-full rounded border" />}
         <div className="space-y-2 pt-2">
@@ -545,7 +545,7 @@ function QuestionBody({
                   }))
                 }
                 className={`w-full p-3 rounded-lg border text-left text-sm ${
-                  qState.selectedOptionId === opt.id ? "border-blue-600 bg-blue-50 font-semibold" : "border-slate-200 hover:bg-slate-50"
+                  qState.selectedOptionId === opt.id ? "border-indigo-600 bg-indigo-50 font-semibold" : "border-slate-200 hover:bg-slate-50"
                 }`}
               >
                 {opt.content}

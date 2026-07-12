@@ -44,6 +44,20 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const submittingRef = useRef(false);
 
+  // FULL Mock State
+  const [isFullMock, setIsFullMock] = useState(false);
+  const FULL_SECTIONS = ["VARC", "LRDI", "QUANT"] as const;
+  type FullSection = typeof FULL_SECTIONS[number];
+  const [sectionIndex, setSectionIndex] = useState(0);
+  const [currentSection, setCurrentSection] = useState<FullSection>("VARC");
+  const [lockedSections, setLockedSections] = useState<Set<FullSection>>(new Set());
+  const [sectionTimers, setSectionTimers] = useState<Record<FullSection, number>>({
+    VARC: 40 * 60,
+    LRDI: 40 * 60,
+    QUANT: 40 * 60,
+  });
+  const [showSectionWarning, setShowSectionWarning] = useState<FullSection | null>(null);
+
   useEffect(() => {
     const fetchTestData = async () => {
       try {
@@ -57,6 +71,9 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
         const testObj = tData.test;
         setTestDetails(testObj);
         setSecondsLeft(testObj.duration * 60);
+        if (testObj.category === "FULL") {
+          setIsFullMock(true);
+        }
 
         const qRes = await fetch(`/api/questions?testId=${testId}`);
         if (qRes.ok) {
@@ -82,6 +99,33 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
     fetchTestData();
   }, [testId]);
 
+  const activeQuestions = isFullMock
+    ? questions.filter((q) => {
+        const cat = q.subtopic?.topic?.category;
+        return cat === currentSection;
+      })
+    : questions;
+
+  const handleSectionTimeUp = useCallback(() => {
+    setLockedSections((prev) => new Set(prev).add(currentSection));
+    if (sectionIndex < 2) {
+      const next = FULL_SECTIONS[sectionIndex + 1];
+      setShowSectionWarning(next);
+    } else {
+      const formSubmit = document.getElementById('hidden-submit-btn');
+      if (formSubmit) formSubmit.click();
+    }
+  }, [currentSection, sectionIndex]);
+
+  const confirmSectionSwitch = (next: FullSection) => {
+    setLockedSections((prev) => new Set(prev).add(currentSection));
+    const nextIdx = FULL_SECTIONS.indexOf(next);
+    setSectionIndex(nextIdx);
+    setCurrentSection(next);
+    setCurrentIndex(0);
+    setShowSectionWarning(null);
+  };
+
   const handleSubmit = useCallback(async () => {
     if (submittingRef.current || questions.length === 0) return;
     submittingRef.current = true;
@@ -98,7 +142,10 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
       };
     });
 
-    const timeSpent = testDetails ? testDetails.duration * 60 - secondsLeft : 0;
+    let timeSpent = testDetails ? testDetails.duration * 60 - secondsLeft : 0;
+    if (isFullMock) {
+      timeSpent = FULL_SECTIONS.reduce((acc, sec) => acc + (40 * 60 - sectionTimers[sec]), 0);
+    }
 
     try {
       const res = await fetch(`/api/tests/${testId}/submit`, {
@@ -126,23 +173,34 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
   useEffect(() => {
     if (!started || questions.length === 0) return;
     timerRef.current = setInterval(() => {
-      setSecondsLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current!);
-          handleSubmit();
-          return 0;
-        }
-        return prev - 1;
-      });
+      if (isFullMock) {
+        setSectionTimers((prev) => {
+          const sec = currentSection;
+          if (prev[sec] <= 1) {
+            handleSectionTimeUp();
+            return { ...prev, [sec]: 0 };
+          }
+          return { ...prev, [sec]: prev[sec] - 1 };
+        });
+      } else {
+        setSecondsLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current!);
+            handleSubmit();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }
     }, 1000);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [started, questions.length, handleSubmit]);
+  }, [started, questions.length, isFullMock, currentSection, handleSubmit, handleSectionTimeUp]);
 
   const handleVisitQuestion = (index: number) => {
     setCurrentIndex(index);
-    const qId = questions[index].id;
+    const qId = activeQuestions[index].id;
     setAnswers((prev) => ({
       ...prev,
       [qId]: { ...prev[qId], visited: true },
@@ -173,7 +231,7 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
   if (loading) {
     return (
       <div className="fixed inset-0 bg-slate-900 text-white flex flex-col items-center justify-center z-50">
-        <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent animate-spin rounded-full" />
+        <div className="h-10 w-10 border-4 border-indigo-500 border-t-transparent animate-spin rounded-full" />
         <p className="text-sm mt-4">Loading CAT test environment...</p>
       </div>
     );
@@ -189,7 +247,7 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
         </p>
         <button
           onClick={() => router.push("/mock-tests")}
-          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-bold"
+          className="px-6 py-2.5 bg-indigo-600 hover:bg-blue-700 rounded-xl text-sm font-bold"
         >
           Back to Mock Tests
         </button>
@@ -204,7 +262,7 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
     return (
       <div className="fixed inset-0 z-50 bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950 text-white flex items-center justify-center p-6">
         <div className="max-w-lg w-full bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 space-y-6">
-          <div className="flex items-center gap-2 text-blue-400">
+          <div className="flex items-center gap-2 text-indigo-400">
             <ShieldCheck className="h-5 w-5" />
             <span className="text-xs font-bold uppercase tracking-widest">CAT Exam Simulator</span>
           </div>
@@ -216,16 +274,16 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
 
           <div className="grid grid-cols-3 gap-3 text-center">
             <div className="p-3 rounded-xl bg-white/5 border border-white/10">
-              <p className="text-2xl font-black text-blue-400">{questions.length}</p>
-              <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">Questions</p>
+              <p className="text-2xl font-black text-indigo-400">{questions.length}</p>
+              <p className="text-xs tracking-wide text-slate-400 font-bold uppercase mt-1">Questions</p>
             </div>
             <div className="p-3 rounded-xl bg-white/5 border border-white/10">
               <p className="text-2xl font-black text-rose-400">{testDetails.duration}</p>
-              <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">Minutes</p>
+              <p className="text-xs tracking-wide text-slate-400 font-bold uppercase mt-1">Minutes</p>
             </div>
             <div className="p-3 rounded-xl bg-white/5 border border-white/10">
               <p className="text-2xl font-black text-emerald-400">{isPyq ? "PYQ" : testDetails.type}</p>
-              <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">Format</p>
+              <p className="text-xs tracking-wide text-slate-400 font-bold uppercase mt-1">Format</p>
             </div>
           </div>
 
@@ -242,7 +300,7 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
 
           <button
             onClick={() => setStarted(true)}
-            className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           >
             <Play className="h-4 w-4 fill-white" /> I am ready — Start Test
           </button>
@@ -267,7 +325,7 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
     );
   }
 
-  const currentQuestion = questions[currentIndex];
+  const currentQuestion = activeQuestions[currentIndex];
   const qState = answers[currentQuestion?.id] || {
     selectedOptionId: null,
     titaAnswer: "",
@@ -282,7 +340,7 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
     const isCurrent = currentIndex === idx;
     let base =
       "h-8 w-8 rounded text-xs font-bold flex items-center justify-center transition-colors cursor-pointer ";
-    if (isCurrent) base += "ring-2 ring-blue-500 ";
+    if (isCurrent) base += "ring-2 ring-indigo-500 ";
     if (!state) return base + "bg-slate-200 text-slate-500";
     const hasAnswer = state.selectedOptionId || state.titaAnswer;
     if (state.isMarkedReview) {
@@ -314,12 +372,18 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
         <div className="flex items-center gap-3 shrink-0">
           <div
             className={`flex items-center gap-2 px-3 py-1 text-xs font-bold rounded ${
-              secondsLeft < 120 ? "bg-red-600 animate-pulse" : "bg-red-700"
+              (isFullMock ? sectionTimers[currentSection] : secondsLeft) < 120 ? "bg-red-600 animate-pulse" : "bg-red-700"
             }`}
           >
             <Clock className="h-4 w-4" />
-            {formatTime(secondsLeft)}
+            {isFullMock ? `Section: ${formatTime(sectionTimers[currentSection])}` : formatTime(secondsLeft)}
           </div>
+          {isFullMock && (
+             <div className="px-3 py-1 bg-slate-700 rounded text-xs font-bold hidden md:block">
+               Total: {formatTime(FULL_SECTIONS.reduce((acc, sec) => acc + sectionTimers[sec], 0))}
+             </div>
+          )}
+          <button id="hidden-submit-btn" className="hidden" onClick={handleSubmit} />
           <button
             onClick={() => {
               if (confirm("Submit test now? You cannot change answers after submission.")) {
@@ -333,13 +397,52 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
         </div>
       </header>
 
-      <div className="h-9 bg-slate-200 px-4 flex items-center gap-1 shrink-0 border-b">
-        <span className="px-3 py-1 bg-white border-t border-x text-xs font-bold text-blue-700">
-          {sectionLabel}
-        </span>
-        <span className="text-[10px] text-slate-500 ml-2">
-          Q{currentIndex + 1}/{questions.length} · Answered {answeredCount} · Marked {reviewCount}
-        </span>
+      <div className="h-10 bg-slate-200 flex items-center px-4 gap-1 border-b shrink-0 overflow-x-auto">
+        {isFullMock ? (
+          <>
+            {FULL_SECTIONS.map((sec, idx) => {
+              const active = sec === currentSection;
+              const locked = lockedSections.has(sec);
+              const label = SECTION_LABELS[sec] || sec;
+              return (
+                <button
+                  key={sec}
+                  disabled={locked && !active}
+                  onClick={() => {
+                    if (!locked || active) {
+                      setSectionIndex(idx);
+                      setCurrentSection(sec);
+                      setCurrentIndex(0);
+                    }
+                  }}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-t whitespace-nowrap ${
+                    active ? "bg-white text-blue-700 border-t border-x" : locked ? "text-slate-400" : "text-slate-600 hover:bg-white/50"
+                  }`}
+                >
+                  {label}
+                  {locked && " 🔒"}
+                </button>
+              );
+            })}
+            {sectionIndex < 2 && (
+              <button
+                onClick={() => setShowSectionWarning(FULL_SECTIONS[sectionIndex + 1])}
+                className="ml-auto px-3 py-1 bg-amber-600 text-white text-xs font-bold rounded"
+              >
+                Next Section →
+              </button>
+            )}
+          </>
+        ) : (
+          <>
+            <span className="px-3 py-1 bg-white border-t border-x text-xs font-bold text-blue-700">
+              {sectionLabel}
+            </span>
+            <span className="text-xs tracking-wide text-slate-500 ml-2">
+              Q{currentIndex + 1}/{activeQuestions.length} · Answered {answeredCount} · Marked {reviewCount}
+            </span>
+          </>
+        )}
       </div>
 
       <div className="flex-1 flex overflow-hidden">
@@ -433,7 +536,7 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
         </div>
 
         <div className="w-56 bg-slate-200 border-l flex flex-col shrink-0 overflow-y-auto">
-          <div className="p-3 border-b bg-white text-[10px] grid grid-cols-2 gap-1 font-semibold text-slate-600">
+          <div className="p-3 border-b bg-white text-xs tracking-wide grid grid-cols-2 gap-1 font-semibold text-slate-600">
             <span className="flex items-center gap-1">
               <span className="h-3 w-3 bg-emerald-500 rounded" /> Answered
             </span>
@@ -448,9 +551,9 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
             </span>
           </div>
           <div className="p-3 flex-1">
-            <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Question Palette</p>
+            <p className="text-xs tracking-wide font-bold uppercase text-slate-500 mb-2">Question Palette</p>
             <div className="grid grid-cols-5 gap-1.5">
-              {questions.map((q, idx) => (
+              {activeQuestions.map((q, idx) => (
                 <button key={q.id} onClick={() => handleVisitQuestion(idx)} className={getPaletteStyle(q.id, idx)}>
                   {idx + 1}
                 </button>
@@ -468,14 +571,40 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
         >
           <ChevronLeft className="h-4 w-4" /> Previous
         </button>
+        {isFullMock && <span className="text-xs text-slate-500 font-bold">{SECTION_LABELS[currentSection] || currentSection}</span>}
         <button
-          onClick={() => currentIndex < questions.length - 1 && handleVisitQuestion(currentIndex + 1)}
-          disabled={currentIndex === questions.length - 1}
-          className="px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg flex items-center gap-1 disabled:opacity-30"
+          onClick={() => currentIndex < activeQuestions.length - 1 && handleVisitQuestion(currentIndex + 1)}
+          disabled={currentIndex === activeQuestions.length - 1}
+          className="px-4 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg flex items-center gap-1 disabled:opacity-30"
         >
           Save & Next <ChevronRight className="h-4 w-4" />
         </button>
       </footer>
+
+      {showSectionWarning && (
+        <div className="fixed inset-0 z-[60] bg-black/60 flex items-center justify-center p-6">
+          <div className="bg-white rounded-2xl p-6 max-w-md space-y-4">
+            <div className="flex items-center gap-2 text-amber-600">
+              <AlertTriangle className="h-5 w-5" />
+              <h3 className="font-bold">Switch to {showSectionWarning}?</h3>
+            </div>
+            <p className="text-sm text-slate-600">
+              You cannot return to {currentSection} after switching. Unanswered questions in {currentSection} will remain unattempted.
+            </p>
+            <div className="flex gap-2">
+              <button onClick={() => setShowSectionWarning(null)} className="flex-1 py-2 border rounded-lg text-sm font-bold">
+                Cancel
+              </button>
+              <button
+                onClick={() => confirmSectionSwitch(showSectionWarning)}
+                className="flex-1 py-2 bg-amber-600 text-white rounded-lg text-sm font-bold"
+              >
+                Confirm Switch
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showCalc && (
         <div className="absolute top-16 left-4 z-50 w-52 rounded-xl border bg-white p-3 shadow-2xl space-y-2">
@@ -495,7 +624,7 @@ export default function TestSimulator({ testId }: TestSimulatorProps) {
               <button
                 key={char}
                 onClick={() => handleCalcPress(char)}
-                className={`py-2 rounded ${char === "=" ? "bg-blue-600 text-white" : "bg-slate-100 hover:bg-slate-200"}`}
+                className={`py-2 rounded ${char === "=" ? "bg-indigo-600 text-white" : "bg-slate-100 hover:bg-slate-200"}`}
               >
                 {char}
               </button>
@@ -530,20 +659,20 @@ function QuestionPanel({
     <div className={`flex flex-col justify-between h-full ${large ? "" : "rounded-lg border bg-white p-5 shadow-sm"}`}>
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-bold text-slate-400 uppercase">Question {currentIndex + 1}</span>
+          <span className="text-xs tracking-wide font-bold text-slate-400 uppercase">Question {currentIndex + 1}</span>
           <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+            className={`text-xs tracking-wide font-bold px-2 py-0.5 rounded uppercase ${
               currentQuestion.difficulty === "EASY"
                 ? "bg-emerald-100 text-emerald-700"
                 : currentQuestion.difficulty === "MEDIUM"
-                ? "bg-blue-100 text-blue-700"
+                ? "bg-indigo-100 text-blue-700"
                 : "bg-red-100 text-red-700"
             }`}
           >
             {currentQuestion.difficulty}
           </span>
           {currentQuestion.type === "TITA" && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase bg-amber-100 text-amber-700">
+            <span className="text-xs tracking-wide font-bold px-2 py-0.5 rounded uppercase bg-amber-100 text-amber-700">
               TITA
             </span>
           )}
@@ -559,7 +688,7 @@ function QuestionPanel({
                 onClick={() => onSelectOption(opt.id)}
                 className={`w-full p-3 rounded-lg border text-left text-sm transition-all ${
                   qState.selectedOptionId === opt.id
-                    ? "border-blue-600 bg-blue-50 text-blue-800 font-semibold"
+                    ? "border-indigo-600 bg-indigo-50 text-blue-800 font-semibold"
                     : "border-slate-200 hover:bg-slate-50"
                 }`}
               >
@@ -572,18 +701,18 @@ function QuestionPanel({
               value={qState.titaAnswer}
               onChange={(e) => onTita(e.target.value)}
               placeholder="Enter numerical answer (TITA)"
-              className="w-full max-w-xs px-3 py-2 text-sm border rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full max-w-xs px-3 py-2 text-sm border rounded-lg focus:border-indigo-500 focus:outline-none"
             />
           )}
         </div>
       </div>
       <div className="flex justify-between items-center pt-4 border-t gap-2 mt-4">
-        <button onClick={onClear} className="px-3 py-1.5 border text-[10px] font-bold rounded-lg hover:bg-slate-50">
+        <button onClick={onClear} className="px-3 py-1.5 border text-xs tracking-wide font-bold rounded-lg hover:bg-slate-50">
           Clear Response
         </button>
         <button
           onClick={onMarkReview}
-          className="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-bold rounded-lg"
+          className="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs tracking-wide font-bold rounded-lg"
         >
           Mark for Review & Next
         </button>

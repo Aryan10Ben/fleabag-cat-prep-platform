@@ -28,7 +28,7 @@ export default function PyqAnalysisPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
       </div>
     );
   }
@@ -53,7 +53,7 @@ export default function PyqAnalysisPage() {
             <Link href={`/pyq/${paperId}/exam`} className="px-4 py-2 bg-white/10 rounded-xl text-xs font-bold flex items-center gap-1">
               <RotateCcw className="h-3.5 w-3.5" /> Retake
             </Link>
-            <Link href="/pyq" className="px-4 py-2 bg-blue-600 rounded-xl text-xs font-bold">All Papers</Link>
+            <Link href="/pyq" className="px-4 py-2 bg-indigo-600 rounded-xl text-xs font-bold">All Papers</Link>
           </div>
         </div>
 
@@ -68,7 +68,7 @@ export default function PyqAnalysisPage() {
 
       <div className="flex gap-2 border-b">
         {(["overview", "review"] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-xs font-bold capitalize border-b-2 -mb-px ${tab === t ? "border-blue-600 text-blue-600" : "border-transparent text-slate-400"}`}>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-xs font-bold capitalize border-b-2 -mb-px ${tab === t ? "border-indigo-600 text-indigo-600" : "border-transparent text-slate-400"}`}>
             {t === "overview" ? "Section Analysis" : "Question Review"}
           </button>
         ))}
@@ -99,12 +99,12 @@ export default function PyqAnalysisPage() {
             const open = expanded[q.id];
             const attempted = q.selectedOptionId || q.titaAnswer;
             return (
-              <div key={q.id} className={`bg-white dark:bg-slate-950 rounded-xl border overflow-hidden ${q.isCorrect ? "border-emerald-300" : attempted ? "border-rose-300" : ""}`}>
+              <div key={q.id} className={`bg-white dark:bg-slate-950 rounded-2xl border overflow-hidden ${q.isCorrect ? "border-emerald-300" : attempted ? "border-rose-300" : ""}`}>
                 <button onClick={() => setExpanded((p) => ({ ...p, [q.id]: !p[q.id] }))} className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-900/50">
                   <div className="flex items-center gap-3 min-w-0">
                     <span className={`h-7 w-7 rounded-lg text-xs font-bold flex items-center justify-center shrink-0 ${!attempted ? "bg-slate-200" : q.isCorrect ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"}`}>{idx + 1}</span>
                     <div className="min-w-0">
-                      <p className="text-[10px] text-slate-400">{q.section} · {q.difficulty} · {q.timeSpentSeconds}s spent</p>
+                      <p className="text-xs tracking-wide text-slate-400">{q.section} · {q.difficulty} · {q.timeSpentSeconds}s spent</p>
                       <p className="text-sm truncate">{q.content.replace(/\$[^$]+\$/g, "...")}</p>
                     </div>
                   </div>
@@ -124,8 +124,8 @@ export default function PyqAnalysisPage() {
                     ) : (
                       <p>Your answer: <strong>{q.titaAnswer || "—"}</strong> · Correct: <strong>{q.options.find((o: any) => o.isCorrect)?.content}</strong></p>
                     )}
-                    <div className="p-3 bg-blue-50 dark:bg-slate-900 rounded-xl">
-                      <p className="text-xs font-bold text-blue-600 flex items-center gap-1 mb-1"><Sparkles className="h-3.5 w-3.5" /> Explanation</p>
+                    <div className="p-3 bg-indigo-50 dark:bg-slate-900 rounded-xl">
+                      <p className="text-xs font-bold text-indigo-600 flex items-center gap-1 mb-1"><Sparkles className="h-3.5 w-3.5" /> Explanation</p>
                       <MathRenderer content={q.solution} className="text-xs" />
                     </div>
                   </div>
@@ -143,7 +143,7 @@ function Stat({ icon: Icon, label, value, suffix }: { icon: React.ComponentType<
   return (
     <div className="p-3 rounded-xl bg-white/10 text-center">
       <Icon className="h-4 w-4 mx-auto mb-1 text-blue-300" />
-      <p className="text-[10px] text-slate-400 uppercase font-bold">{label}</p>
+      <p className="text-xs tracking-wide text-slate-400 uppercase font-bold">{label}</p>
       <p className="text-xl font-black">{value}{suffix && <span className="text-xs font-normal text-slate-400"> {suffix}</span>}</p>
     </div>
   );

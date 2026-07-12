@@ -31,7 +31,7 @@ export default function FormulaSheetView({
       ? "bg-indigo-600 hover:bg-indigo-700"
       : accent === "emerald"
       ? "bg-emerald-600 hover:bg-emerald-700"
-      : "bg-blue-600 hover:bg-blue-700";
+      : "bg-indigo-600 hover:bg-blue-700";
 
   useEffect(() => {
     const fetchFormula = async () => {
@@ -90,7 +90,7 @@ export default function FormulaSheetView({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
         <p className="text-sm text-slate-400">Loading formula guide...</p>
       </div>
     );
@@ -136,13 +136,13 @@ export default function FormulaSheetView({
           </button>
         </div>
         <div
-          className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-350"
+          className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-400"
           dangerouslySetInnerHTML={{ __html: sheet.content }}
         />
       </div>
 
       {toggled && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-500/20 text-xs font-bold text-emerald-600 flex items-center gap-2 justify-center">
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-500/20 text-xs font-bold text-emerald-600 flex items-center gap-2 justify-center">
           <CheckCircle className="h-5 w-5" />
           Milestone checked! Redirecting...
         </div>

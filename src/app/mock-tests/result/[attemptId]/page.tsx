@@ -17,6 +17,7 @@ import {
   BarChart3,
   RotateCcw,
   ArrowRight,
+  Info,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -61,7 +62,7 @@ export default function ResultAnalysisPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
         <p className="text-sm text-slate-400">Generating performance analysis...</p>
       </div>
     );
@@ -71,7 +72,7 @@ export default function ResultAnalysisPage() {
     return (
       <div className="max-w-md mx-auto py-20 text-center space-y-4">
         <h2 className="text-lg font-bold">Results Not Found</h2>
-        <Link href="/mock-tests" className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold">
+        <Link href="/mock-tests" className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold">
           Back to Tests
         </Link>
       </div>
@@ -111,7 +112,7 @@ export default function ResultAnalysisPage() {
               </Link>
               <Link
                 href="/mock-tests"
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold flex items-center gap-1.5"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-bold flex items-center gap-1.5"
               >
                 All Tests <ArrowRight className="h-3.5 w-3.5" />
               </Link>
@@ -119,8 +120,8 @@ export default function ResultAnalysisPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <StatCard icon={Trophy} label="Percentile" value={`${attempt.percentile}`} suffix="ile" accent="text-amber-400" />
-            <StatCard icon={Award} label="Score" value={`${attempt.score}`} suffix={`/ ${analysis?.maxScore}`} accent="text-blue-400" />
+            <StatCard icon={Trophy} label="Percentile" value={`${attempt.percentile}`} suffix="ile" accent="text-amber-400" badge="Estimated" infoText="Normalized estimate based on historical difficulty. >80% score = ~99.9%ile, >60% = ~99.5%ile." />
+            <StatCard icon={Award} label="Score" value={`${attempt.score}`} suffix={`/ ${analysis?.maxScore}`} accent="text-indigo-400" />
             <StatCard icon={Target} label="Accuracy" value={`${attempt.accuracy}`} suffix="%" accent="text-emerald-400" />
             <StatCard icon={CheckCircle2} label="Correct" value={`${attempt.correctCount}`} suffix={`/ ${questions.length}`} accent="text-emerald-400" />
             <StatCard icon={Clock} label="Time Used" value={`${timeUsedMins}`} suffix={`/ ${durationMins}m`} accent="text-slate-300" />
@@ -130,7 +131,7 @@ export default function ResultAnalysisPage() {
         {/* Question palette summary */}
         <div className="bg-white dark:bg-slate-950 rounded-2xl border p-5 space-y-3">
           <h2 className="text-sm font-bold flex items-center gap-2">
-            <BarChart3 className="h-4 w-4 text-blue-600" /> Question Status Overview
+            <BarChart3 className="h-4 w-4 text-indigo-600" /> Question Status Overview
           </h2>
           <div className="flex flex-wrap gap-1.5">
             {questions.map((q: any, idx: number) => {
@@ -165,7 +166,7 @@ export default function ResultAnalysisPage() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 text-xs font-bold capitalize border-b-2 -mb-px transition-colors ${
-                activeTab === tab ? "border-blue-600 text-blue-600" : "border-transparent text-slate-400"
+                activeTab === tab ? "border-indigo-600 text-indigo-600" : "border-transparent text-slate-400"
               }`}
             >
               {tab === "overview" ? "Performance Overview" : "Solutions & Review"}
@@ -191,7 +192,7 @@ export default function ResultAnalysisPage() {
                     <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${
-                          diff === "EASY" ? "bg-emerald-500" : diff === "MEDIUM" ? "bg-blue-500" : "bg-rose-500"
+                          diff === "EASY" ? "bg-emerald-500" : diff === "MEDIUM" ? "bg-indigo-500" : "bg-rose-500"
                         }`}
                         style={{ width: `${pct}%` }}
                       />
@@ -216,9 +217,9 @@ export default function ResultAnalysisPage() {
                   <span className="font-semibold">Net Score</span>
                   <span className="font-black text-lg">{attempt.score}</span>
                 </div>
-                <div className="flex justify-between p-3 rounded-xl bg-blue-50 dark:bg-blue-950/20">
+                <div className="flex justify-between p-3 rounded-xl bg-indigo-50 dark:bg-blue-950/20">
                   <span className="text-blue-700 font-semibold">Score % of Maximum</span>
-                  <span className="font-black text-blue-600">{analysis.pctOfMax}%</span>
+                  <span className="font-black text-indigo-600">{analysis.pctOfMax}%</span>
                 </div>
                 <div className="flex justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-900">
                   <span className="font-semibold">Time Efficiency</span>
@@ -238,7 +239,7 @@ export default function ResultAnalysisPage() {
                 <div
                   key={q.id}
                   id={`q-review-${q.id}`}
-                  className={`bg-white dark:bg-slate-950 rounded-xl border overflow-hidden ${
+                  className={`bg-white dark:bg-slate-950 rounded-2xl border overflow-hidden ${
                     !attempted ? "border-slate-200" : q.isCorrect ? "border-emerald-300" : "border-rose-300"
                   }`}
                 >
@@ -261,7 +262,7 @@ export default function ResultAnalysisPage() {
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                        className={`text-xs tracking-wide font-bold px-2 py-0.5 rounded ${
                           !attempted ? "bg-slate-100 text-slate-500" : q.isCorrect ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-600"
                         }`}
                       >
@@ -319,8 +320,8 @@ export default function ResultAnalysisPage() {
                         </div>
                       )}
 
-                      <div className="p-4 bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-blue-900 rounded-xl">
-                        <p className="text-xs font-bold text-blue-600 flex items-center gap-1.5 mb-2">
+                      <div className="p-4 bg-indigo-50 dark:bg-slate-900 border border-indigo-200 dark:border-blue-900 rounded-xl">
+                        <p className="text-xs font-bold text-indigo-600 flex items-center gap-1.5 mb-2">
                           <Sparkles className="h-4 w-4" /> Shortcut Solution
                         </p>
                         <p className="text-xs leading-relaxed whitespace-pre-line text-slate-700 dark:text-slate-300">
@@ -345,17 +346,37 @@ function StatCard({
   value,
   suffix,
   accent,
+  badge,
+  infoText,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string;
   suffix?: string;
   accent: string;
+  badge?: string;
+  infoText?: string;
 }) {
   return (
-    <div className="p-3 rounded-xl bg-white/10 border border-white/10 text-center">
+    <div className="p-3 rounded-xl bg-white/10 border border-white/10 text-center relative group">
+      {badge && (
+        <span className="absolute -top-2 -right-2 bg-amber-500 text-amber-950 text-[9px] font-black px-1.5 py-0.5 rounded uppercase shadow-sm">
+          {badge}
+        </span>
+      )}
       <Icon className={`h-4 w-4 mx-auto mb-1 ${accent}`} />
-      <p className="text-[10px] text-slate-400 font-bold uppercase">{label}</p>
+      <div className="flex items-center justify-center gap-1">
+        <p className="text-xs tracking-wide text-slate-400 font-bold uppercase">{label}</p>
+        {infoText && (
+          <div className="relative flex items-center justify-center">
+            <Info className="h-3 w-3 text-slate-500 hover:text-slate-300 cursor-help" />
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-slate-800 text-white text-xs tracking-wide leading-relaxed rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+              {infoText}
+              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
+            </div>
+          </div>
+        )}
+      </div>
       <p className="text-xl font-black mt-0.5">
         {value}
         {suffix && <span className="text-xs font-normal text-slate-400 ml-0.5">{suffix}</span>}

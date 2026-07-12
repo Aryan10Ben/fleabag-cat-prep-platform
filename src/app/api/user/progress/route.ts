@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     });
 
     // Fetch progress rows
-    const progressRows = await prisma.userProgress.findMany({
+    let progressRows = await prisma.userProgress.findMany({
       where: { userId },
       include: {
         subtopic: {
@@ -52,6 +52,9 @@ export async function GET(req: NextRequest) {
           achievements: [],
           rawProgress: [],
           dailyGoalProgress: null,
+          weakAreas: [],
+          revisionPending: [],
+          sectionTopicCaptions: { QUANT: "", VARC: "", LRDI: "" },
         });
       }
 
@@ -59,66 +62,76 @@ export async function GET(req: NextRequest) {
         data: allSubtopics.map((sub) => ({
           userId,
           subtopicId: sub.id,
-          formulaSheetRead: Math.random() > 0.6,
-          practiceQuestionsCompleted: Math.random() > 0.6,
-          topicTestCompleted: Math.random() > 0.7,
-          revisionDone: Math.random() > 0.8,
+          formulaSheetRead: false,
+          practiceQuestionsCompleted: false,
+          topicTestCompleted: false,
+          revisionDone: false,
         })),
       });
 
-      // Re-fetch
-      return GET(req);
+      // Re-fetch directly assigning to progressRows
+      progressRows = await prisma.userProgress.findMany({
+        where: { userId },
+        include: {
+          subtopic: {
+            include: {
+              topic: true,
+            },
+          },
+        },
+      });
     }
 
-    // Calculate percentages
-    const totalItems = progressRows.length * 4;
-    let completedItems = 0;
+        // Calculate percentages based on actual questions correctly answered
+    const totalQuestions = await prisma.question.findMany({
+      include: { subtopic: { include: { topic: true } } }
+    });
+    
+    let quantTotalQuestions = 0;
+    let varcTotalQuestions = 0;
+    let lrdiTotalQuestions = 0;
 
-    let quantTotal = 0;
-    let quantCompleted = 0;
-
-    let varcTotal = 0;
-    let varcCompleted = 0;
-
-    let lrdiTotal = 0;
-    let lrdiCompleted = 0;
-
-    const topicProgress: Record<string, { total: number; completed: number }> = {};
-
-    progressRows.forEach((row) => {
-      const subtopic = row.subtopic;
-      const category = subtopic.topic.category; // QUANT, VARC, LRDI
-      
-      const count =
-        (row.formulaSheetRead ? 1 : 0) +
-        (row.practiceQuestionsCompleted ? 1 : 0) +
-        (row.topicTestCompleted ? 1 : 0) +
-        (row.revisionDone ? 1 : 0);
-
-      completedItems += count;
-
-      if (category === "QUANT") {
-        quantTotal += 4;
-        quantCompleted += count;
-      } else if (category === "VARC") {
-        varcTotal += 4;
-        varcCompleted += count;
-      } else if (category === "LRDI") {
-        lrdiTotal += 4;
-        lrdiCompleted += count;
-      }
-
-      // Track subtopic stats
-      topicProgress[subtopic.name] = {
-        total: 4,
-        completed: count,
-      };
+    totalQuestions.forEach(q => {
+      const cat = q.subtopic?.topic?.category;
+      if (cat === "QUANT") quantTotalQuestions++;
+      else if (cat === "VARC") varcTotalQuestions++;
+      else if (cat === "LRDI") lrdiTotalQuestions++;
     });
 
-    const overallProgress = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
-    const quantProgress = quantTotal > 0 ? Math.round((quantCompleted / quantTotal) * 100) : 0;
-    const varcProgress = varcTotal > 0 ? Math.round((varcCompleted / varcTotal) * 100) : 0;
-    const lrdiProgress = lrdiTotal > 0 ? Math.round((lrdiCompleted / lrdiTotal) * 100) : 0;
+    // We fetch attemptAnswers later in the file, so we need to calculate correct unique questions here.
+    const allAttemptAnswers = await prisma.attemptAnswer.findMany({
+      where: { attempt: { userId }, isCorrect: true },
+      select: { questionId: true }
+    });
+    const uniqueCorrectQIds = new Set(allAttemptAnswers.map(a => a.questionId));
+
+    let quantCorrect = 0;
+    let varcCorrect = 0;
+    let lrdiCorrect = 0;
+    
+    uniqueCorrectQIds.forEach(qid => {
+      const q = totalQuestions.find(x => x.id === qid);
+      if (q) {
+        const cat = q.subtopic?.topic?.category;
+        if (cat === "QUANT") quantCorrect++;
+        else if (cat === "VARC") varcCorrect++;
+        else if (cat === "LRDI") lrdiCorrect++;
+      }
+    });
+
+    const totalBank = quantTotalQuestions + varcTotalQuestions + lrdiTotalQuestions;
+    const totalCorrect = quantCorrect + varcCorrect + lrdiCorrect;
+
+    const overallProgress = totalBank > 0 ? Math.round((totalCorrect / totalBank) * 100) : 0;
+    const quantProgress = quantTotalQuestions > 0 ? Math.round((quantCorrect / quantTotalQuestions) * 100) : 0;
+    const varcProgress = varcTotalQuestions > 0 ? Math.round((varcCorrect / varcTotalQuestions) * 100) : 0;
+    const lrdiProgress = lrdiTotalQuestions > 0 ? Math.round((lrdiCorrect / lrdiTotalQuestions) * 100) : 0;
+
+    // Build topicProgress
+    const topicProgress: Record<string, { total: number; completed: number }> = {};
+    progressRows.forEach((row) => {
+      topicProgress[row.subtopic.name] = { total: 4, completed: 0 }; // Legacy
+    });
 
     // Fetch recent attempts
     const recentAttempts = await prisma.attempt.findMany({
@@ -185,6 +198,160 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // Fetch all attempt answers for this user to calculate subtopic accuracies
+    const attemptAnswers = await prisma.attemptAnswer.findMany({
+      where: {
+        attempt: {
+          userId,
+        },
+      },
+      select: {
+        questionId: true,
+        isCorrect: true,
+        selectedOptionId: true,
+        titaAnswer: true,
+        timeSpentSeconds: true,
+      },
+      orderBy: { id: "desc" }
+    });
+
+    const uniqueQuestionIds = Array.from(new Set(attemptAnswers.map((ans) => ans.questionId)));
+
+    const questions = await prisma.question.findMany({
+      where: {
+        id: {
+          in: uniqueQuestionIds,
+        },
+      },
+      include: {
+        options: true,
+        subtopic: {
+          include: {
+            topic: true
+          }
+        }
+      }
+    });
+
+    const questionMap = new Map<string, any>();
+    questions.forEach((q) => {
+      questionMap.set(q.id, q);
+    });
+
+    // Group answers by subtopic and populate revision queue
+    const subtopicStats: Record<string, { total: number; correct: number; totalTime: number }> = {};
+    const revisionQueue: any[] = [];
+    const seenRevQ = new Set<string>();
+
+    attemptAnswers.forEach((ans) => {
+      const q = questionMap.get(ans.questionId);
+      if (!q || !q.subtopicId) return;
+      
+      const subId = q.subtopicId;
+      if (!subtopicStats[subId]) {
+        subtopicStats[subId] = { total: 0, correct: 0, totalTime: 0 };
+      }
+      subtopicStats[subId].total += 1;
+      subtopicStats[subId].totalTime += (ans.timeSpentSeconds || 0);
+      
+      if (ans.isCorrect) {
+        subtopicStats[subId].correct += 1;
+      } else {
+        // Add to revision queue if wrong or skipped, up to limit
+        if (!seenRevQ.has(q.id) && revisionQueue.length < 50) {
+          seenRevQ.add(q.id);
+          revisionQueue.push({
+            id: q.id,
+            content: q.content,
+            topic: q.subtopic?.topic?.name || "Unknown",
+            category: q.subtopic?.topic?.category || "Unknown",
+            userAnswer: ans.selectedOptionId 
+              ? q.options.find((o: any) => o.id === ans.selectedOptionId)?.content 
+              : ans.titaAnswer || "(Skipped)",
+            correctAnswer: q.type === "MCQ"
+              ? q.options.find((o: any) => o.isCorrect)?.content
+              : q.answer
+          });
+        }
+      }
+    });
+
+    // Determine all topic accuracies for performance page
+    const allTopicAccuracies = progressRows
+      .filter((row) => {
+        const stats = subtopicStats[row.subtopicId];
+        return stats && stats.total > 0;
+      })
+      .map((row) => {
+        const stats = subtopicStats[row.subtopicId];
+        const accuracy = Math.round((stats.correct / stats.total) * 100);
+        const avgTime = Math.round(stats.totalTime / stats.total);
+        return {
+          subtopicId: row.subtopicId,
+          name: row.subtopic.name,
+          category: row.subtopic.topic.category,
+          accuracy,
+          avgTime,
+          total: stats.total,
+          correct: stats.correct,
+        };
+      })
+      .sort((a, b) => b.accuracy - a.accuracy); // Highest to lowest
+
+    // Determine weak areas: topicTestCompleted === true AND total >= 1 AND accuracy < 70
+    const weakAreas = progressRows
+      .filter((row) => {
+        if (!row.topicTestCompleted) return false;
+        const stats = subtopicStats[row.subtopicId];
+        if (!stats || stats.total === 0) return false;
+        const accuracy = Math.round((stats.correct / stats.total) * 100);
+        return accuracy < 70;
+      })
+      .map((row) => {
+        const stats = subtopicStats[row.subtopicId];
+        const accuracy = Math.round((stats.correct / stats.total) * 100);
+        return {
+          subtopicId: row.subtopicId,
+          name: row.subtopic.name,
+          category: row.subtopic.topic.category,
+          accuracy,
+        };
+      })
+      .sort((a, b) => a.accuracy - b.accuracy); // sort by lowest accuracy first
+
+    // Determine revision pending topics: revisionDone === false AND (practiceCompleted OR topicTestCompleted)
+    const revisionPending = progressRows
+      .filter((row) => !row.revisionDone && (row.practiceQuestionsCompleted || row.topicTestCompleted))
+      .map((row) => ({
+        subtopicId: row.subtopicId,
+        name: row.subtopic.name,
+        category: row.subtopic.topic.category,
+      }));
+
+    // Precompute topic list captions per section (QUANT/VARC/LRDI)
+    const allTopics = await prisma.topic.findMany({
+      select: {
+        name: true,
+        category: true,
+      },
+    });
+
+    const getCaptionForCategory = (category: string) => {
+      const names = allTopics.filter((t) => t.category === category).map((t) => t.name);
+      if (names.length === 0) return "";
+      const firstThree = names.slice(0, 3);
+      const remainingCount = names.length - firstThree.length;
+      return remainingCount > 0
+        ? `${firstThree.join(", ")} +${remainingCount} more`
+        : firstThree.join(", ");
+    };
+
+    const sectionTopicCaptions = {
+      QUANT: getCaptionForCategory("QUANT"),
+      VARC: getCaptionForCategory("VARC"),
+      LRDI: getCaptionForCategory("LRDI"),
+    };
+
     return NextResponse.json({
       userName: user?.name,
       streak: user?.streak || 0,
@@ -197,10 +364,16 @@ export async function GET(req: NextRequest) {
       achievements,
       rawProgress: progressRows,
       dailyGoalProgress,
+      weakAreas,
+      allTopicAccuracies,
+      revisionPending,
+      sectionTopicCaptions,
+      revisionQueue,
+      subtopicStats,
     });
   } catch (error: unknown) {
     console.error("GET user progress error:", error);
-    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }
 
@@ -211,7 +384,7 @@ export async function POST(req: NextRequest) {
     const userId = auth.userId;
 
     const body = await req.json();
-    const { subtopicId, field, value } = body; // field = 'formulaSheetRead', etc.
+    const { subtopicId, field, value, questionsAnswered } = body; // field = 'formulaSheetRead', etc.
 
     if (!subtopicId || !field) {
       return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
@@ -246,6 +419,7 @@ export async function POST(req: NextRequest) {
       const category = subtopic?.topic?.category;
       if (category) {
         const dateStr = getLocalDateString();
+        const incrementValue = questionsAnswered ?? 10;
         await prisma.dailyGoalProgress.upsert({
           where: {
             userId_date: {
@@ -254,9 +428,9 @@ export async function POST(req: NextRequest) {
             },
           },
           update: {
-            ...(category === "QUANT" && { quantSolved: { increment: 10 } }),
-            ...(category === "VARC" && { varcSolved: { increment: 10 } }),
-            ...(category === "LRDI" && { lrdiSolved: { increment: 10 } }),
+            ...(category === "QUANT" && { quantSolved: { increment: incrementValue } }),
+            ...(category === "VARC" && { varcSolved: { increment: incrementValue } }),
+            ...(category === "LRDI" && { lrdiSolved: { increment: incrementValue } }),
           },
           create: {
             userId,
@@ -264,9 +438,9 @@ export async function POST(req: NextRequest) {
             quantGoal: 10,
             varcGoal: 6,
             lrdiGoal: 4,
-            quantSolved: category === "QUANT" ? 10 : 0,
-            varcSolved: category === "VARC" ? 10 : 0,
-            lrdiSolved: category === "LRDI" ? 10 : 0,
+            quantSolved: category === "QUANT" ? incrementValue : 0,
+            varcSolved: category === "VARC" ? incrementValue : 0,
+            lrdiSolved: category === "LRDI" ? incrementValue : 0,
           },
         });
       }
@@ -300,6 +474,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, progress });
   } catch (error: unknown) {
     console.error("POST user progress error:", error);
-    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }

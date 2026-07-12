@@ -134,6 +134,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: unknown) {
     console.error("Similar question generation error:", error);
-    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }

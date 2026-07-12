@@ -54,12 +54,11 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
     return pathname.startsWith(href);
   };
 
-  const [solvedToday, setSolvedToday] = useState(8);
-  const [dailyGoal, setDailyGoal] = useState(15);
+  const [solvedToday, setSolvedToday] = useState(0);
+  const [dailyGoal, setDailyGoal] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentDate, setCurrentDate] = useState("");
-  const [userName, setUserName] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const handleLogoutConfirm = useCallback(() => {
@@ -119,28 +118,7 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
     setCurrentDate(dateStr);
   }, []);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch("/api/user/progress");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.userName) {
-            setUserName(data.userName);
-          }
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    if (session) {
-      fetchUser();
-    }
-    window.addEventListener("profile-updated", fetchUser);
-    return () => {
-      window.removeEventListener("profile-updated", fetchUser);
-    };
-  }, [session, pathname]);
+
 
   const toggleDarkMode = () => {
     if (typeof window !== "undefined") {
@@ -179,22 +157,11 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
           </div>
         </button>
 
-        <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-350 flex items-center gap-2 lg:hidden">
-          <Calendar className="h-4 w-4 text-blue-500 hidden sm:inline" />
-          <span>{currentDate || "June 9, 2026"}</span>
+        <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-2 lg:hidden">
+          <Calendar className="h-4 w-4 text-indigo-500 hidden sm:inline" />
+          <span suppressHydrationWarning>{currentDate}</span>
         </span>
-        <div className="hidden md:flex lg:hidden items-center gap-4 text-xs font-semibold text-slate-400 dark:text-slate-500">
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-1.5 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900 px-2 py-0.5 rounded-lg transition-all border border-transparent hover:border-slate-150 dark:hover:border-slate-800"
-            title="Click to adjust daily targets"
-          >
-            <CheckSquare className="h-4 w-4 text-emerald-500" />
-            <span className="text-slate-700 dark:text-slate-350 font-semibold">
-              <strong className="text-slate-900 dark:text-white font-extrabold">{solvedToday} / {dailyGoal}</strong> solved today
-            </span>
-          </button>
-        </div>
+
 
         {/* Horizontal Navigation for Desktop */}
         <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5">
@@ -207,11 +174,11 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
                 href={item.href}
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                   active
-                    ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400"
+                    ? "bg-indigo-50 dark:bg-blue-950/40 text-indigo-600 dark:text-indigo-400"
                     : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100"
                 }`}
               >
-                <Icon className={`h-4 w-4 ${active ? "text-blue-600 dark:text-blue-400" : "text-slate-400"}`} />
+                <Icon className={`h-4 w-4 ${active ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"}`} />
                 <span>{item.name}</span>
               </Link>
             );
@@ -222,9 +189,9 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
       {/* User Controls */}
       <div className="flex items-center gap-4">
         {/* Desktop Date and solved targets */}
-        <div className="hidden lg:flex items-center gap-4 text-xs font-semibold text-slate-400 dark:text-slate-500 mr-2">
-          <span className="text-xs font-semibold text-slate-700 dark:text-slate-350 flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-blue-500" />
+        <div className="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-400 dark:text-slate-500 mr-2">
+          <span className="text-xs font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-indigo-500" />
             <span>{currentDate}</span>
           </span>
           <button 
@@ -233,7 +200,7 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
             title="Click to adjust daily targets"
           >
             <CheckSquare className="h-4 w-4 text-emerald-500" />
-            <span className="text-slate-700 dark:text-slate-350 font-semibold">
+            <span className="text-slate-700 dark:text-slate-400 font-semibold">
               <strong className="text-slate-900 dark:text-white font-extrabold">{solvedToday} / {dailyGoal}</strong> solved today
             </span>
           </button>
@@ -251,18 +218,18 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
         {session?.user ? (
           <div className="flex items-center gap-3">
             <Link href="/profile" className="flex items-center gap-2.5 group">
-              <div className="h-8 w-8 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center transition-all group-hover:border-blue-500/35">
+              <div className="h-8 w-8 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center transition-all group-hover:border-indigo-500/35">
                 <img 
-                  src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(userName || session.user.name || "CAT Aspirant")}`} 
+                  src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(session.user.name || "CAT Aspirant")}`} 
                   alt="Avatar" 
                   className="h-full w-full object-cover" 
                 />
               </div>
               <div className="hidden sm:block text-left">
-                <p className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 transition-colors">
-                  {userName || session.user.name}
+                <p className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 transition-colors">
+                  {session.user.name || "Aspirant"}
                 </p>
-                <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-none">
+                <p className="text-xs tracking-wide text-slate-400 dark:text-slate-500 leading-none">
                   {(session.user as any).role || "USER"}
                 </p>
               </div>
@@ -282,7 +249,7 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
         ) : (
           <Link
             href="/login"
-            className="text-xs font-semibold px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+            className="text-xs font-semibold px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
           >
             Log In
           </Link>

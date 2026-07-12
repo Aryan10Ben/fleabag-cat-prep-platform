@@ -68,7 +68,7 @@ export async function GET() {
     return NextResponse.json(dailyProgress);
   } catch (error: unknown) {
     console.error("GET daily goal error:", error);
-    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }
 
@@ -119,6 +119,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, dailyProgress });
   } catch (error: unknown) {
     console.error("POST daily goal error:", error);
-    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }

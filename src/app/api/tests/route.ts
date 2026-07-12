@@ -29,6 +29,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ tests });
   } catch (error: unknown) {
     console.error("GET tests error:", error);
-    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }

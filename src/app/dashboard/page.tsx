@@ -162,12 +162,12 @@ export default function Dashboard() {
     );
   }
 
-  // Fallbacks if fetch fails
-  const progress = data?.overallProgress ?? 62;
-  const quant = data?.quantProgress ?? 80;
-  const varc = data?.varcProgress ?? 65;
-  const lrdi = data?.lrdiProgress ?? 58;
-  const streak = data?.streak ?? 5;
+  // Fallbacks if fetch fails or is still loading
+  const progress = data?.overallProgress ?? 0;
+  const quant = data?.quantProgress ?? 0;
+  const varc = data?.varcProgress ?? 0;
+  const lrdi = data?.lrdiProgress ?? 0;
+  const streak = data?.streak ?? 0;
   const recentAttempts = data?.recentAttempts ?? [];
   const achievements = data?.achievements ?? [];
 
@@ -175,9 +175,19 @@ export default function Dashboard() {
   const quantSolved = dailyGoalProgress?.quantSolved ?? 0;
   const varcSolved = dailyGoalProgress?.varcSolved ?? 0;
   const lrdiSolved = dailyGoalProgress?.lrdiSolved ?? 0;
-  const quantGoal = dailyGoalProgress?.quantGoal ?? 10;
-  const varcGoal = dailyGoalProgress?.varcGoal ?? 6;
-  const lrdiGoal = dailyGoalProgress?.lrdiGoal ?? 4;
+  const quantGoal = dailyGoalProgress?.quantGoal ?? 0;
+  const varcGoal = dailyGoalProgress?.varcGoal ?? 0;
+  const lrdiGoal = dailyGoalProgress?.lrdiGoal ?? 0;
+
+  
+  const getRank = (progress: number) => {
+    if (progress < 10) return "Novice";
+    if (progress < 30) return "Aspirant";
+    if (progress < 60) return "Challenger";
+    if (progress < 90) return "Warrior";
+    return "Legend";
+  };
+  const rank = getRank(progress);
 
   const solvedToday = quantSolved + varcSolved + lrdiSolved;
   const dailyGoal = quantGoal + varcGoal + lrdiGoal;
@@ -187,17 +197,22 @@ export default function Dashboard() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Page identity breadcrumb/label */}
-      <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 select-none">
+      <div className="text-xs tracking-wide font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 select-none">
         CATPrep / Dashboard
       </div>
       
       {/* Header welcome banner */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-950 p-6 md:p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden">
-        <div className="absolute -right-16 -top-16 h-36 w-36 rounded-full bg-blue-500/5 blur-2xl"></div>
+        <div className="absolute -right-16 -top-16 h-36 w-36 rounded-full bg-indigo-500/5 blur-2xl"></div>
         <div className="space-y-2 relative">
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-            Welcome back, {session?.user?.name || "Aspirant"}!
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+              Welcome back, {session?.user?.name || "Aspirant"}!
+            </h1>
+            <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-black text-xs tracking-wide uppercase tracking-widest rounded-full border border-indigo-200 dark:border-indigo-800">
+              Rank: {rank}
+            </span>
+          </div>
           <p className="text-sm text-slate-500 dark:text-slate-400 max-w-lg">
             Consistency is the secret ingredient. You solved {solvedToday} questions today. Keep it up!
           </p>
@@ -208,7 +223,7 @@ export default function Dashboard() {
           <Flame className="h-6 w-6 fill-orange-500 text-orange-500 animate-bounce" />
           <div>
             <p className="text-sm font-black leading-none">{streak} Days</p>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-500 mt-1">Daily Streak</p>
+            <p className="text-xs tracking-wide font-bold uppercase tracking-wider text-orange-600 dark:text-orange-500 mt-1">Daily Streak</p>
           </div>
         </div>
       </div>
@@ -223,8 +238,8 @@ export default function Dashboard() {
             { label: "Strongest", value: analytics.analytics.strongestSection ?? "—" },
             { label: "Weakest", value: analytics.analytics.weakestSection ?? "—" },
           ].map((w) => (
-            <div key={w.label} className="bg-white dark:bg-slate-950 p-4 rounded-xl border text-center">
-              <p className="text-[10px] font-bold text-slate-400 uppercase">{w.label}</p>
+            <div key={w.label} className="bg-white dark:bg-slate-950 p-4 rounded-2xl border text-center">
+              <p className="text-xs tracking-wide font-bold text-slate-400 uppercase">{w.label}</p>
               <p className="text-lg font-black mt-1">{w.value}</p>
             </div>
           ))}
@@ -264,10 +279,10 @@ export default function Dashboard() {
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs font-bold">
                     <span className="text-slate-600 dark:text-slate-400">Quantitative Aptitude</span>
-                    <span className="text-blue-600 dark:text-blue-400">{quant}%</span>
+                    <span className="text-indigo-600 dark:text-indigo-400">{quant}%</span>
                   </div>
                   <div className="h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-600 rounded-full transition-all duration-1000" style={{ width: `${quant}%` }}></div>
+                    <div className="h-full bg-indigo-600 rounded-full transition-all duration-1000" style={{ width: `${quant}%` }}></div>
                   </div>
                 </div>
                 {/* VARC */}
@@ -298,18 +313,18 @@ export default function Dashboard() {
           <div className="grid md:grid-cols-3 gap-6">
             <Link
               href="/quant"
-              className="p-5 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-blue-500/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 flex flex-col justify-between h-40 group shadow-sm"
+              className="p-5 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-indigo-500/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 flex flex-col justify-between h-40 group shadow-sm"
             >
               <div className="flex justify-between items-start">
-                <div className="h-9 w-9 bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center">
+                <div className="h-9 w-9 bg-indigo-50 dark:bg-blue-950/20 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center">
                   <Zap className="h-5 w-5" />
                 </div>
-                <ArrowRight className="h-5 w-5 text-slate-400 dark:text-slate-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all duration-300" />
+                <ArrowRight className="h-5 w-5 text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all duration-300" />
               </div>
               <div>
                 <div className="flex items-center justify-between mt-2">
-                  <h3 className="text-sm font-bold group-hover:text-blue-600 transition-colors">Quant Preparation</h3>
-                  <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Continue &rarr;</span>
+                  <h3 className="text-sm font-bold group-hover:text-indigo-600 transition-colors">Quant Preparation</h3>
+                  <span className="text-xs tracking-wide font-bold text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Continue &rarr;</span>
                 </div>
                 <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Arithmetic, Algebra, Geometry +2 more</p>
               </div>
@@ -328,7 +343,7 @@ export default function Dashboard() {
               <div>
                 <div className="flex items-center justify-between mt-2">
                   <h3 className="text-sm font-bold group-hover:text-indigo-600 transition-colors">VARC Preparation</h3>
-                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Continue &rarr;</span>
+                  <span className="text-xs tracking-wide font-bold text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Continue &rarr;</span>
                 </div>
                 <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Reading Comprehension, Verbal Ability</p>
               </div>
@@ -347,7 +362,7 @@ export default function Dashboard() {
               <div>
                 <div className="flex items-center justify-between mt-2">
                   <h3 className="text-sm font-bold group-hover:text-emerald-600 transition-colors">LRDI Preparation</h3>
-                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Continue &rarr;</span>
+                  <span className="text-xs tracking-wide font-bold text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Continue &rarr;</span>
                 </div>
                 <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Logical Reasoning, Data Interpretation</p>
               </div>
@@ -358,7 +373,7 @@ export default function Dashboard() {
           <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-bold tracking-tight">Recent Mock Performance</h2>
-              <Link href="/performance" className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1">
+              <Link href="/performance" className="text-xs font-semibold text-indigo-600 hover:underline flex items-center gap-1">
                 All Scores <ArrowUpRight className="h-3 w-3" />
               </Link>
             </div>
@@ -372,7 +387,7 @@ export default function Dashboard() {
                 </div>
                 <Link
                   href="/mock-tests"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold"
                 >
                   Take a Mock Test
                 </Link>
@@ -395,8 +410,8 @@ export default function Dashboard() {
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="text-sm font-black text-blue-600 dark:text-blue-400">{attempt.percentile}%ile</span>
-                      <p className="text-[10px] text-slate-400 mt-1">Estimated</p>
+                      <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">{attempt.percentile}%ile</span>
+                      <p className="text-xs tracking-wide text-slate-400 mt-1">Estimated</p>
                     </div>
                   </div>
                 ))}
@@ -437,7 +452,7 @@ export default function Dashboard() {
           <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
             <div className="space-y-1">
               <h2 className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Weak Areas</h2>
-              <p className="text-[10px] text-slate-650 dark:text-slate-400 leading-normal">
+              <p className="text-xs tracking-wide text-slate-650 dark:text-slate-400 leading-normal">
                 Topic-level weak spots below 70% accuracy (minimum 5 attempts), excluding section averages.
               </p>
             </div>
@@ -446,7 +461,7 @@ export default function Dashboard() {
                 <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <h4 className="text-xs font-bold">Geometry Circles</h4>
-                  <p className="text-[10px] text-red-700 dark:text-red-400">Accuracy is 64%. Needs Revision.</p>
+                  <p className="text-xs tracking-wide text-red-700 dark:text-red-400">Accuracy is 64%. Needs Revision.</p>
                 </div>
               </div>
 
@@ -454,7 +469,7 @@ export default function Dashboard() {
                 <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <h4 className="text-xs font-bold">Time-Speed-Distance</h4>
-                  <p className="text-[10px] text-amber-850 dark:text-amber-400">Formula sheet read, but topic test accuracy is 50%.</p>
+                  <p className="text-xs tracking-wide text-amber-850 dark:text-amber-400">Formula sheet read, but topic test accuracy is 50%.</p>
                 </div>
               </div>
             </div>
@@ -467,11 +482,11 @@ export default function Dashboard() {
               <div className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
                 <div className="space-y-0.5">
                   <h4 className="text-xs font-bold">Percentages</h4>
-                  <span className="text-[10px] text-slate-600 dark:text-slate-400">Last practiced: 3 days ago</span>
+                  <span className="text-xs tracking-wide text-slate-600 dark:text-slate-400">Last practiced: 3 days ago</span>
                 </div>
                 <Link
                   href="/quant"
-                  className="p-1 rounded bg-blue-50 dark:bg-slate-900 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-colors"
+                  className="p-1 rounded bg-indigo-50 dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-colors"
                 >
                   <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -480,11 +495,11 @@ export default function Dashboard() {
               <div className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
                 <div className="space-y-0.5">
                   <h4 className="text-xs font-bold">Arrangement sets</h4>
-                  <span className="text-[10px] text-slate-600 dark:text-slate-400">Last practiced: Yesterday</span>
+                  <span className="text-xs tracking-wide text-slate-600 dark:text-slate-400">Last practiced: Yesterday</span>
                 </div>
                 <Link
                   href="/lrdi"
-                  className="p-1 rounded bg-blue-50 dark:bg-slate-900 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-colors"
+                  className="p-1 rounded bg-indigo-50 dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-colors"
                 >
                   <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -496,7 +511,7 @@ export default function Dashboard() {
           <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Achievements Shelf</h2>
-              <Link href="/profile" className="text-xs font-semibold text-blue-600 hover:underline">View All</Link>
+              <Link href="/profile" className="text-xs font-semibold text-indigo-600 hover:underline">View All</Link>
             </div>
             
             <div className="grid grid-cols-4 gap-3">
@@ -506,7 +521,7 @@ export default function Dashboard() {
                   className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-center flex flex-col items-center justify-center space-y-1 hover:bg-blue-550/10 cursor-pointer group"
                   title={ach.description}
                 >
-                  <Award className="h-5 w-5 text-blue-500 group-hover:scale-110 transition-transform" />
+                  <Award className="h-5 w-5 text-indigo-500 group-hover:scale-110 transition-transform" />
                   <span className="text-[9px] font-bold text-slate-700 dark:text-slate-350 block truncate max-w-full">
                     {ach.title.split(" ")[0]}
                   </span>
@@ -527,6 +542,19 @@ export default function Dashboard() {
         onClose={() => setIsModalOpen(false)} 
         initialData={dailyGoalProgress}
       />
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={async () => {
+            const res = await fetch("/api/user/log-day", { method: "POST" });
+            if (res.ok) {
+              refreshData();
+            }
+          }}
+          className="px-4 py-2 bg-slate-100 dark:bg-slate-900 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 rounded-lg text-xs font-bold font-mono transition-colors border border-slate-200 dark:border-slate-800 shadow-sm"
+        >
+          [DEV] Log a Practice Day
+        </button>
+      </div>
     </div>
   );
 }

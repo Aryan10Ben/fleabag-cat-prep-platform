@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -124,6 +124,8 @@ model Attempt {
   completedAt      DateTime        @default(now())
   answers          AttemptAnswer[]
   sectionScores    AttemptSectionScore[]
+
+  @@index([userId])
 }
 
 model AttemptSectionScore {
@@ -236,6 +238,8 @@ model Bookmark {
   user             User            @relation(fields: [userId], references: [id])
   questionId       String
   question         Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model FormulaSheet {
@@ -268,6 +272,8 @@ model Achievement {
   title            String          // e.g. "First Mock Attempted", "CAT Warrior"
   description      String
   unlockedAt       DateTime        @default(now())
+
+  @@index([userId])
 }
 
 model DailyGoalProgress {
