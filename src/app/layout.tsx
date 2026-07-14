@@ -22,8 +22,48 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "CATPrep - Progress-Driven CAT Preparation Platform",
+  title: "CATPrep",
   description: "Accelerate your CAT score with topic checklists, simulated mocks, and progress tracking.",
+  applicationName: "CATPrep",
+  metadataBase: new URL("https://fleabag.vercel.app"),
+  openGraph: {
+    title: "CATPrep",
+    description: "Accelerate your CAT score with topic checklists, simulated mocks, and progress tracking.",
+    url: "https://fleabag.vercel.app",
+    siteName: "CATPrep",
+    type: "website",
+    images: [
+      {
+        url: "/cat-logo.png",
+        width: 512,
+        height: 512,
+        alt: "CATPrep logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "CATPrep",
+    description: "Accelerate your CAT score with topic checklists, simulated mocks, and progress tracking.",
+    images: ["/cat-logo.png"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      { rel: "manifest", url: "/site.webmanifest" },
+    ],
+  },
+  appleWebApp: {
+    title: "CATPrep",
+    statusBarStyle: "default",
+  },
 };
 
 export default function RootLayout({

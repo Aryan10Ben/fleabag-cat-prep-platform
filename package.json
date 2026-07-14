@@ -2,7 +2,7 @@
   "name": "fleabag-cat-prep",
   "version": "1.0.0",
   "private": false,
-  "description": "Progress-driven CAT exam preparation platform with mocks, PYQ papers, analytics, and streak tracking.",
+  "description": "CATPrep — CAT exam preparation platform with mocks, PYQ papers, analytics, and streak tracking.",
   "repository": {
     "type": "git",
     "url": "https://github.com/Aryan10Ben/fleabag-cat-prep-platform.git"
@@ -10,7 +10,7 @@
   "bugs": {
     "url": "https://github.com/Aryan10Ben/fleabag-cat-prep-platform/issues"
   },
-  "homepage": "https://fleabag1-cat-prep-platform.vercel.app",
+  "homepage": "https://fleabag.vercel.app",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
