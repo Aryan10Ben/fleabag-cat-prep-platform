@@ -16,8 +16,14 @@ export default function LandingPage() {
         <div className="max-w-3xl w-full text-center space-y-8">
           
           {/* Logo Badge */}
-          <div className="flex justify-center mb-2">
-            <Image src="/logo.png" alt="CATPrep Logo" width={80} height={80} className="rounded-full shadow-lg object-cover" />
+          <div className="flex justify-center mb-6">
+            <Image 
+              src="/landing-logo.png" 
+              alt="CATPrep Logo" 
+              width={148} 
+              height={200} 
+              className="drop-shadow-lg object-contain" 
+            />
           </div>
 
           {/* Heading */}
