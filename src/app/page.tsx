@@ -16,13 +16,13 @@ export default function LandingPage() {
         <div className="max-w-3xl w-full flex flex-col items-center justify-center text-center space-y-6 md:space-y-8">
           
           {/* Logo Badge */}
-          <div className="flex justify-center w-full">
+          <div className="flex justify-center w-full relative z-20">
             <Image 
               src="/landing-logo.png" 
               alt="CATPrep Logo" 
               width={160} 
               height={216} 
-              className="w-36 sm:w-44 h-auto mx-auto drop-shadow-2xl object-contain" 
+              className="w-36 sm:w-44 h-auto mx-auto drop-shadow-2xl object-contain translate-x-[50px] translate-y-[27px]" 
               priority
             />
           </div>
