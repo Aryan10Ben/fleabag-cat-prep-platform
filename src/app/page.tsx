@@ -22,7 +22,7 @@ export default function LandingPage() {
               alt="CATPrep Logo" 
               width={160} 
               height={216} 
-              className="w-32 sm:w-40 h-auto drop-shadow-2xl object-contain" 
+              className="w-36 sm:w-44 h-auto mx-auto drop-shadow-2xl object-contain" 
               priority
             />
           </div>
@@ -33,7 +33,7 @@ export default function LandingPage() {
           </h1>
 
           {/* Call to Action */}
-          <div className="flex items-center justify-center pt-4">
+          <div className="flex items-center justify-center mt-2">
             <Link
               href="/login"
               className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-2.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded-xl shadow-md backdrop-blur-md active:scale-[0.98] transition-all"
