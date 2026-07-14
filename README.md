@@ -11,7 +11,7 @@
 | Links | |
 |-------|---|
 | **Repository** | [github.com/Aryan10Ben/fleabag-cat-prep-platform](https://github.com/Aryan10Ben/fleabag-cat-prep-platform) |
-| **Live demo** | [fleabag.vercel.app](https://fleabag.vercel.app) |
+| **Live demo** | [fleabag-cat-prep-platform.vercel.app](https://fleabag-cat-prep-platform.vercel.app/) |
 | **Releases** | [v1.0.0](https://github.com/Aryan10Ben/fleabag-cat-prep-platform/releases/tag/v1.0.0) |
 | **Issues** | [Report a bug](https://github.com/Aryan10Ben/fleabag-cat-prep-platform/issues) |
 
