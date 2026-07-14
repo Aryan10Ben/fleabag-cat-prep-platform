@@ -16,8 +16,8 @@ import {
   Settings,
   Flame,
   Award,
-  Cat
 } from "lucide-react";
+import Image from "next/image";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -97,7 +97,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex flex-col flex-1 overflow-y-auto py-6 px-4">
           {/* Brand Logo */}
           <Link href="/dashboard" onClick={onClose} className="flex justify-center mb-8 pt-2">
-            <Cat className="h-10 w-10 text-indigo-500" />
+            <Image src="/logo.png" alt="CATPrep Logo" width={40} height={40} className="rounded-full object-cover" />
           </Link>
 
           {/* Navigation Links */}

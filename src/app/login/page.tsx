@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Flame, Sparkles, CheckSquare, ShieldAlert, ArrowRight, Loader2, Cat } from "lucide-react";
+import Image from "next/image";
+import { Flame, Sparkles, CheckSquare, ShieldAlert, ArrowRight, Loader2 } from "lucide-react";
 
 const motivationalQuotes = [
   "Success is built one question at a time.",
@@ -74,7 +75,7 @@ export default function LoginPage() {
         <div className="space-y-6 py-12 relative z-10 w-full">
           {/* Logo centered above Welcome back */}
           <div className="flex justify-center mb-4">
-            <Cat className="h-20 w-20 text-indigo-400" />
+            <Image src="/logo.png" alt="CATPrep Logo" width={80} height={80} className="rounded-full shadow-lg object-cover" />
           </div>
 
           <div className="space-y-1 text-center">

@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/cat-logo.png",
+        url: "/logo.png",
         width: 512,
         height: 512,
         alt: "CATPrep logo",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "CATPrep",
     description: "Accelerate your CAT score with topic checklists, simulated mocks, and progress tracking.",
-    images: ["/cat-logo.png"],
+    images: ["/logo.png"],
   },
   icons: {
     icon: [

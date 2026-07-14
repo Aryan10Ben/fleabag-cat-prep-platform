@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { Cat, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -16,7 +17,7 @@ export default function LandingPage() {
           
           {/* Logo Badge */}
           <div className="flex justify-center mb-2">
-            <Cat className="h-16 w-16 text-indigo-400" />
+            <Image src="/logo.png" alt="CATPrep Logo" width={80} height={80} className="rounded-full shadow-lg object-cover" />
           </div>
 
           {/* Heading */}
